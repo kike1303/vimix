@@ -1,0 +1,49 @@
+{
+  "app": {
+    "name": "Vimix",
+    "tagline": "Herramientas de procesamiento de medios"
+  },
+  "home": {
+    "title": "Que quieres hacer?",
+    "subtitle": "Elige una herramienta para comenzar.",
+    "back": "Volver"
+  },
+  "upload": {
+    "optionsLabel": "Opciones",
+    "dropzone": "Arrastra y suelta tu archivo aqui, o haz clic para buscar",
+    "accepted": "Aceptados: {extensions}",
+    "changeFile": "Haz clic o arrastra para cambiar",
+    "submit": "Iniciar procesamiento",
+    "submitting": "Subiendo...",
+    "errorConnect": "No se pudo conectar a la API. Esta corriendo el servicio?",
+    "errorUpload": "Error al subir el archivo"
+  },
+  "job": {
+    "title": "Procesando",
+    "newJob": "Nuevo trabajo",
+    "loading": "Cargando...",
+    "starting": "Iniciando...",
+    "done": "Listo!",
+    "notFound": "Trabajo no encontrado",
+    "download": "Descargar",
+    "readyToDownload": "Listo para descargar"
+  },
+  "processors": {
+    "video-bg-remove": {
+      "label": "Quitar fondo de video",
+      "description": "Elimina el fondo de un video y exporta con transparencia en WebP, GIF, MOV o PNG."
+    }
+  },
+  "options": {
+    "fps": "Cuadros por segundo",
+    "resolution": "Ancho de salida",
+    "model": "Modelo IA",
+    "format": "Formato de salida"
+  },
+  "theme": {
+    "toggle": "Cambiar tema"
+  },
+  "lang": {
+    "toggle": "Idioma"
+  }
+}

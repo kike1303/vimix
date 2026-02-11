@@ -1,0 +1,49 @@
+{
+  "app": {
+    "name": "Vimix",
+    "tagline": "Media processing toolkit"
+  },
+  "home": {
+    "title": "What do you want to do?",
+    "subtitle": "Choose a tool to get started.",
+    "back": "Back"
+  },
+  "upload": {
+    "optionsLabel": "Options",
+    "dropzone": "Drag & drop your file here, or click to browse",
+    "accepted": "Accepted: {extensions}",
+    "changeFile": "Click or drop to change",
+    "submit": "Start Processing",
+    "submitting": "Uploading...",
+    "errorConnect": "Could not connect to the API. Is the processor service running?",
+    "errorUpload": "Upload failed"
+  },
+  "job": {
+    "title": "Processing",
+    "newJob": "New job",
+    "loading": "Loading...",
+    "starting": "Starting...",
+    "done": "Done!",
+    "notFound": "Job not found",
+    "download": "Download",
+    "readyToDownload": "Ready to download"
+  },
+  "processors": {
+    "video-bg-remove": {
+      "label": "Remove Video Background",
+      "description": "Remove the background from a video and export with transparency in WebP, GIF, MOV, or PNG."
+    }
+  },
+  "options": {
+    "fps": "Frames per second",
+    "resolution": "Output width",
+    "model": "AI model",
+    "format": "Output format"
+  },
+  "theme": {
+    "toggle": "Toggle theme"
+  },
+  "lang": {
+    "toggle": "Language"
+  }
+}
