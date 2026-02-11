@@ -2,6 +2,7 @@ from app.processors.base import BaseProcessor
 from app.processors.video_bg_remove import VideoBgRemoveProcessor
 from app.processors.image_bg_remove import ImageBgRemoveProcessor
 from app.processors.image_convert import ImageConvertProcessor
+from app.processors.video_convert import VideoConvertProcessor
 
 _PROCESSORS: dict[str, BaseProcessor] = {}
 
@@ -14,6 +15,7 @@ def _register(proc: BaseProcessor) -> None:
 _register(VideoBgRemoveProcessor())
 _register(ImageBgRemoveProcessor())
 _register(ImageConvertProcessor())
+_register(VideoConvertProcessor())
 
 
 def get_processor(processor_id: str) -> BaseProcessor:

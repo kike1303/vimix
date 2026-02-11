@@ -40,19 +40,60 @@
     "image-convert": {
       "label": "Convert Image Format",
       "description": "Convert an image to a different format with optional resizing and quality control."
+    },
+    "video-convert": {
+      "label": "Convert Video Format",
+      "description": "Convert a video to a different format, codec, or resolution with full control over quality."
     }
   },
   "options": {
-    "fps": "Frames per second",
-    "resolution": "Output width",
-    "model": "AI model",
-    "refine_edges": "Refine edges",
-    "fg_threshold": "Foreground threshold",
-    "bg_threshold": "Background threshold",
-    "erode_size": "Erode size",
-    "format": "Output format",
-    "quality": "Quality",
-    "resize": "Resize width"
+    "fps": {
+      "label": "Frames per second",
+      "description": "Number of frames extracted per second. Lower values produce smaller files but choppier animation."
+    },
+    "resolution": {
+      "label": "Resolution",
+      "description": "Scale the output to a specific width. Height is adjusted automatically to keep the aspect ratio."
+    },
+    "model": {
+      "label": "AI model",
+      "description": "Fast is quicker but less precise. Quality gives better edges. ISNet is optimized for precise object segmentation."
+    },
+    "refine_edges": {
+      "label": "Refine edges",
+      "description": "Uses alpha matting to smooth edges and remove white halos. Slower but much better edge quality."
+    },
+    "fg_threshold": {
+      "label": "Foreground threshold",
+      "description": "Pixels above this value are considered definite foreground. Higher values are more conservative (0-255)."
+    },
+    "bg_threshold": {
+      "label": "Background threshold",
+      "description": "Pixels below this value are considered definite background. Lower values are more conservative (0-255)."
+    },
+    "erode_size": {
+      "label": "Erode size",
+      "description": "How much to shrink the mask before refining. Larger values remove more edge artifacts but may trim the subject."
+    },
+    "format": {
+      "label": "Output format"
+    },
+    "quality": {
+      "label": "Quality",
+      "description": "Higher values produce better quality but larger files."
+    },
+    "resize": {
+      "label": "Resize width",
+      "description": "Scale the image to a specific width. Height is adjusted automatically to keep the aspect ratio."
+    },
+    "codec": {
+      "label": "Codec",
+      "description": "H.264 is the most compatible. H.265 gives better compression. VP9 is great for web. ProRes is for pro video editing. Copy skips re-encoding."
+    },
+    "audio": {
+      "label": "Audio",
+      "description": "Keep or remove the audio track from the output video."
+    }
   },
   "theme": {
     "toggle": "Toggle theme"

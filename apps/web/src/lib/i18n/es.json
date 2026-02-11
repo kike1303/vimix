@@ -40,19 +40,60 @@
     "image-convert": {
       "label": "Convertir formato de imagen",
       "description": "Convierte una imagen a otro formato con opciones de redimension y calidad."
+    },
+    "video-convert": {
+      "label": "Convertir formato de video",
+      "description": "Convierte un video a otro formato, codec o resolucion con control total de calidad."
     }
   },
   "options": {
-    "fps": "Cuadros por segundo",
-    "resolution": "Ancho de salida",
-    "model": "Modelo IA",
-    "refine_edges": "Refinar bordes",
-    "fg_threshold": "Umbral de primer plano",
-    "bg_threshold": "Umbral de fondo",
-    "erode_size": "Tamaño de erosion",
-    "format": "Formato de salida",
-    "quality": "Calidad",
-    "resize": "Redimensionar ancho"
+    "fps": {
+      "label": "Cuadros por segundo",
+      "description": "Cantidad de cuadros extraidos por segundo. Valores mas bajos producen archivos mas pequeños pero animaciones menos fluidas."
+    },
+    "resolution": {
+      "label": "Resolucion",
+      "description": "Escala la salida a un ancho especifico. La altura se ajusta automaticamente para mantener la proporcion."
+    },
+    "model": {
+      "label": "Modelo IA",
+      "description": "Fast es mas rapido pero menos preciso. Quality da mejores bordes. ISNet esta optimizado para segmentacion precisa de objetos."
+    },
+    "refine_edges": {
+      "label": "Refinar bordes",
+      "description": "Usa alpha matting para suavizar bordes y eliminar halos blancos. Mas lento pero mucho mejor calidad de bordes."
+    },
+    "fg_threshold": {
+      "label": "Umbral de primer plano",
+      "description": "Pixeles sobre este valor se consideran primer plano definitivo. Valores mas altos son mas conservadores (0-255)."
+    },
+    "bg_threshold": {
+      "label": "Umbral de fondo",
+      "description": "Pixeles bajo este valor se consideran fondo definitivo. Valores mas bajos son mas conservadores (0-255)."
+    },
+    "erode_size": {
+      "label": "Tamaño de erosion",
+      "description": "Cuanto encoger la mascara antes de refinar. Valores grandes eliminan mas artefactos en bordes pero pueden recortar el sujeto."
+    },
+    "format": {
+      "label": "Formato de salida"
+    },
+    "quality": {
+      "label": "Calidad",
+      "description": "Valores mas altos producen mejor calidad pero archivos mas grandes."
+    },
+    "resize": {
+      "label": "Redimensionar ancho",
+      "description": "Escala la imagen a un ancho especifico. La altura se ajusta automaticamente para mantener la proporcion."
+    },
+    "codec": {
+      "label": "Codec",
+      "description": "H.264 es el mas compatible. H.265 da mejor compresion. VP9 es ideal para web. ProRes es para edicion de video profesional. Copy omite la re-codificacion."
+    },
+    "audio": {
+      "label": "Audio",
+      "description": "Mantener o eliminar la pista de audio del video de salida."
+    }
   },
   "theme": {
     "toggle": "Cambiar tema"

@@ -3,6 +3,7 @@
   import "$lib/i18n";
   import { ModeWatcher } from "mode-watcher";
   import { _, isLoading } from "svelte-i18n";
+  import { Tooltip } from "bits-ui";
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import LangToggle from "$lib/components/LangToggle.svelte";
 
@@ -11,6 +12,7 @@
 
 <ModeWatcher />
 
+<Tooltip.Provider>
 {#if $isLoading}
   <div class="flex min-h-screen items-center justify-center bg-background">
     <p class="text-muted-foreground">Loading...</p>
@@ -41,3 +43,4 @@
     </footer>
   </div>
 {/if}
+</Tooltip.Provider>

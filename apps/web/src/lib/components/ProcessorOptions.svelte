@@ -4,6 +4,8 @@
   import { Slider } from "$lib/components/ui/slider/index.js";
   import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
   import * as Card from "$lib/components/ui/card/index.js";
+  import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+  import Info from "lucide-svelte/icons/info";
 
   let {
     schema,
@@ -16,16 +18,24 @@
   } = $props();
 
   function optionLabel(id: string, fallback: string): string {
-    const key = `options.${id}`;
+    const key = `options.${id}.label`;
     const translated = $_(key);
     return translated !== key ? translated : fallback;
   }
 
+  function optionDescription(id: string): string | null {
+    const key = `options.${id}.description`;
+    const translated = $_(key);
+    return translated !== key ? translated : null;
+  }
+
   function isVisible(opt: OptionSchema): boolean {
     if (!opt.showWhen) return true;
-    return Object.entries(opt.showWhen).every(
-      ([key, val]) => String(values[key] ?? "") === val,
-    );
+    return Object.entries(opt.showWhen).every(([key, val]) => {
+      const current = String(values[key] ?? "");
+      if (Array.isArray(val)) return val.includes(current);
+      return current === val;
+    });
   }
 </script>
 
@@ -38,9 +48,20 @@
       <div class="grid gap-5 sm:grid-cols-2">
         {#each schema as opt (opt.id)}
           {#if isVisible(opt)}
+            {@const desc = optionDescription(opt.id)}
             <div class="flex flex-col gap-2">
-              <span class="text-xs font-medium text-muted-foreground">
+              <span class="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 {optionLabel(opt.id, opt.label)}
+                {#if desc}
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <Info class="size-3.5 text-muted-foreground/50 hover:text-muted-foreground transition" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      {desc}
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                {/if}
               </span>
 
               {#if opt.type === "number"}

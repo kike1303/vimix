@@ -96,7 +96,11 @@ _MEDIA_TYPES: dict[str, str] = {
     ".gif": "image/gif",
     ".bmp": "image/bmp",
     ".tiff": "image/tiff",
+    ".mp4": "video/mp4",
     ".mov": "video/quicktime",
+    ".webm": "video/webm",
+    ".avi": "video/x-msvideo",
+    ".mkv": "video/x-matroska",
     ".zip": "application/zip",
 }
 
