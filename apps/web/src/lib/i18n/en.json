@@ -47,6 +47,9 @@
     "resolution": "Output width",
     "model": "AI model",
     "refine_edges": "Refine edges",
+    "fg_threshold": "Foreground threshold",
+    "bg_threshold": "Background threshold",
+    "erode_size": "Erode size",
     "format": "Output format",
     "quality": "Quality",
     "resize": "Resize width"

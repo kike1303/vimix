@@ -47,6 +47,9 @@
     "resolution": "Ancho de salida",
     "model": "Modelo IA",
     "refine_edges": "Refinar bordes",
+    "fg_threshold": "Umbral de primer plano",
+    "bg_threshold": "Umbral de fondo",
+    "erode_size": "Tamaño de erosion",
     "format": "Formato de salida",
     "quality": "Calidad",
     "resize": "Redimensionar ancho"

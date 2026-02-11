@@ -71,6 +71,36 @@ class VideoBgRemoveProcessor(BaseProcessor):
                 ],
             },
             {
+                "id": "fg_threshold",
+                "label": "Foreground threshold",
+                "type": "number",
+                "default": 240,
+                "min": 0,
+                "max": 255,
+                "step": 1,
+                "showWhen": {"refine_edges": "on"},
+            },
+            {
+                "id": "bg_threshold",
+                "label": "Background threshold",
+                "type": "number",
+                "default": 10,
+                "min": 0,
+                "max": 255,
+                "step": 1,
+                "showWhen": {"refine_edges": "on"},
+            },
+            {
+                "id": "erode_size",
+                "label": "Erode size",
+                "type": "number",
+                "default": 10,
+                "min": 1,
+                "max": 40,
+                "step": 1,
+                "showWhen": {"refine_edges": "on"},
+            },
+            {
                 "id": "format",
                 "label": "Output format",
                 "type": "select",
@@ -96,6 +126,9 @@ class VideoBgRemoveProcessor(BaseProcessor):
         resolution: str = str(opts.get("resolution", "original"))
         model_name: str = str(opts.get("model", "u2netp"))
         refine_edges: bool = str(opts.get("refine_edges", "off")) == "on"
+        fg_threshold: int = int(opts.get("fg_threshold", 240))
+        bg_threshold: int = int(opts.get("bg_threshold", 10))
+        erode_size: int = int(opts.get("erode_size", 10))
         out_format: str = str(opts.get("format", "webp"))
 
         frames_dir = output_dir / "frames"
@@ -127,7 +160,8 @@ class VideoBgRemoveProcessor(BaseProcessor):
             nonlocal completed
             async with sem:
                 await loop.run_in_executor(
-                    _pool, _remove_bg_sync, fp, cut_dir / fp.name, session, refine_edges
+                    _pool, _remove_bg_sync, fp, cut_dir / fp.name, session,
+                    refine_edges, fg_threshold, bg_threshold, erode_size,
                 )
                 completed += 1
                 pct = 15 + (completed / total) * 65
@@ -241,7 +275,13 @@ class VideoBgRemoveProcessor(BaseProcessor):
                 zf.write(f, f.name)
 
 
-def _remove_bg_sync(src: Path, dest: Path, session: object, refine_edges: bool = False) -> None:
+def _remove_bg_sync(
+    src: Path, dest: Path, session: object,
+    refine_edges: bool = False,
+    fg_threshold: int = 240,
+    bg_threshold: int = 10,
+    erode_size: int = 10,
+) -> None:
     """Standalone function (picklable) for thread pool execution."""
     with Image.open(src) as im:
         im = im.convert("RGBA")
@@ -249,9 +289,9 @@ def _remove_bg_sync(src: Path, dest: Path, session: object, refine_edges: bool =
             im,
             session=session,
             alpha_matting=refine_edges,
-            alpha_matting_foreground_threshold=240,
-            alpha_matting_background_threshold=10,
-            alpha_matting_erode_size=10,
+            alpha_matting_foreground_threshold=fg_threshold,
+            alpha_matting_background_threshold=bg_threshold,
+            alpha_matting_erode_size=erode_size,
         )
         if isinstance(result, bytes):
             dest.write_bytes(result)

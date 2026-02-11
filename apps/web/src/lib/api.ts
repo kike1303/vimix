@@ -14,6 +14,7 @@ export interface OptionSchema {
   max?: number;
   step?: number;
   choices?: OptionChoice[];
+  showWhen?: Record<string, string>;
 }
 
 export interface Processor {

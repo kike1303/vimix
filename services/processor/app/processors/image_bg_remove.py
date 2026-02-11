@@ -46,6 +46,36 @@ class ImageBgRemoveProcessor(BaseProcessor):
                 ],
             },
             {
+                "id": "fg_threshold",
+                "label": "Foreground threshold",
+                "type": "number",
+                "default": 240,
+                "min": 0,
+                "max": 255,
+                "step": 1,
+                "showWhen": {"refine_edges": "on"},
+            },
+            {
+                "id": "bg_threshold",
+                "label": "Background threshold",
+                "type": "number",
+                "default": 10,
+                "min": 0,
+                "max": 255,
+                "step": 1,
+                "showWhen": {"refine_edges": "on"},
+            },
+            {
+                "id": "erode_size",
+                "label": "Erode size",
+                "type": "number",
+                "default": 10,
+                "min": 1,
+                "max": 40,
+                "step": 1,
+                "showWhen": {"refine_edges": "on"},
+            },
+            {
                 "id": "format",
                 "label": "Output format",
                 "type": "select",
@@ -67,6 +97,9 @@ class ImageBgRemoveProcessor(BaseProcessor):
         opts = options or {}
         model_name: str = str(opts.get("model", "u2netp"))
         refine_edges: bool = str(opts.get("refine_edges", "off")) == "on"
+        fg_threshold: int = int(opts.get("fg_threshold", 240))
+        bg_threshold: int = int(opts.get("bg_threshold", 10))
+        erode_size: int = int(opts.get("erode_size", 10))
         out_format: str = str(opts.get("format", "png"))
 
         output_file = output_dir / f"output.{out_format}"
@@ -77,7 +110,8 @@ class ImageBgRemoveProcessor(BaseProcessor):
 
         await on_progress(30, "Removing background...")
         await loop.run_in_executor(
-            _pool, _process_image, input_path, output_file, session, refine_edges
+            _pool, _process_image, input_path, output_file, session,
+            refine_edges, fg_threshold, bg_threshold, erode_size,
         )
 
         await on_progress(100, "Done!")
@@ -85,7 +119,11 @@ class ImageBgRemoveProcessor(BaseProcessor):
 
 
 def _process_image(
-    src: Path, dest: Path, session: object, refine_edges: bool
+    src: Path, dest: Path, session: object,
+    refine_edges: bool,
+    fg_threshold: int = 240,
+    bg_threshold: int = 10,
+    erode_size: int = 10,
 ) -> None:
     with Image.open(src) as im:
         im = im.convert("RGBA")
@@ -93,9 +131,9 @@ def _process_image(
             im,
             session=session,
             alpha_matting=refine_edges,
-            alpha_matting_foreground_threshold=240,
-            alpha_matting_background_threshold=10,
-            alpha_matting_erode_size=10,
+            alpha_matting_foreground_threshold=fg_threshold,
+            alpha_matting_background_threshold=bg_threshold,
+            alpha_matting_erode_size=erode_size,
         )
         if isinstance(result, bytes):
             dest.write_bytes(result)
