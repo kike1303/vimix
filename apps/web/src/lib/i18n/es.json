@@ -38,6 +38,7 @@
     "fps": "Cuadros por segundo",
     "resolution": "Ancho de salida",
     "model": "Modelo IA",
+    "refine_edges": "Refinar bordes",
     "format": "Formato de salida"
   },
   "theme": {

@@ -61,6 +61,16 @@ class VideoBgRemoveProcessor(BaseProcessor):
                 ],
             },
             {
+                "id": "refine_edges",
+                "label": "Refine edges",
+                "type": "select",
+                "default": "off",
+                "choices": [
+                    {"value": "off", "label": "Off"},
+                    {"value": "on", "label": "On"},
+                ],
+            },
+            {
                 "id": "format",
                 "label": "Output format",
                 "type": "select",
@@ -85,6 +95,7 @@ class VideoBgRemoveProcessor(BaseProcessor):
         fps: int = int(opts.get("fps", 15))
         resolution: str = str(opts.get("resolution", "original"))
         model_name: str = str(opts.get("model", "u2netp"))
+        refine_edges: bool = str(opts.get("refine_edges", "off")) == "on"
         out_format: str = str(opts.get("format", "webp"))
 
         frames_dir = output_dir / "frames"
@@ -116,7 +127,7 @@ class VideoBgRemoveProcessor(BaseProcessor):
             nonlocal completed
             async with sem:
                 await loop.run_in_executor(
-                    _pool, _remove_bg_sync, fp, cut_dir / fp.name, session
+                    _pool, _remove_bg_sync, fp, cut_dir / fp.name, session, refine_edges
                 )
                 completed += 1
                 pct = 15 + (completed / total) * 65
@@ -230,11 +241,18 @@ class VideoBgRemoveProcessor(BaseProcessor):
                 zf.write(f, f.name)
 
 
-def _remove_bg_sync(src: Path, dest: Path, session: object) -> None:
+def _remove_bg_sync(src: Path, dest: Path, session: object, refine_edges: bool = False) -> None:
     """Standalone function (picklable) for thread pool execution."""
     with Image.open(src) as im:
         im = im.convert("RGBA")
-        result = remove(im, session=session)
+        result = remove(
+            im,
+            session=session,
+            alpha_matting=refine_edges,
+            alpha_matting_foreground_threshold=240,
+            alpha_matting_background_threshold=10,
+            alpha_matting_erode_size=10,
+        )
         if isinstance(result, bytes):
             dest.write_bytes(result)
         else:

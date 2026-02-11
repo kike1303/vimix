@@ -38,6 +38,7 @@
     "fps": "Frames per second",
     "resolution": "Output width",
     "model": "AI model",
+    "refine_edges": "Refine edges",
     "format": "Output format"
   },
   "theme": {
