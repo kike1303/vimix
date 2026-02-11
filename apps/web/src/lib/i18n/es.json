@@ -32,6 +32,14 @@
     "video-bg-remove": {
       "label": "Quitar fondo de video",
       "description": "Elimina el fondo de un video y exporta con transparencia en WebP, GIF, MOV o PNG."
+    },
+    "image-bg-remove": {
+      "label": "Quitar fondo de imagen",
+      "description": "Elimina el fondo de una imagen y exporta como PNG o WebP con transparencia."
+    },
+    "image-convert": {
+      "label": "Convertir formato de imagen",
+      "description": "Convierte una imagen a otro formato con opciones de redimension y calidad."
     }
   },
   "options": {
@@ -39,7 +47,9 @@
     "resolution": "Ancho de salida",
     "model": "Modelo IA",
     "refine_edges": "Refinar bordes",
-    "format": "Formato de salida"
+    "format": "Formato de salida",
+    "quality": "Calidad",
+    "resize": "Redimensionar ancho"
   },
   "theme": {
     "toggle": "Cambiar tema"

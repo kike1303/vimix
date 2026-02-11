@@ -26,9 +26,8 @@
 
   let downloadName = $derived(`${stem}${resultExtension}`);
 
-  let previewable = $derived(
-    resultExtension === ".webp" || resultExtension === ".gif",
-  );
+  const PREVIEWABLE = new Set([".webp", ".gif", ".png", ".jpg", ".bmp"]);
+  let previewable = $derived(PREVIEWABLE.has(resultExtension));
 </script>
 
 <div class="flex flex-col items-center gap-6">

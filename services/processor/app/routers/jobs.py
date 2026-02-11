@@ -91,7 +91,11 @@ async def job_progress_sse(job_id: str):
 
 _MEDIA_TYPES: dict[str, str] = {
     ".webp": "image/webp",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
     ".gif": "image/gif",
+    ".bmp": "image/bmp",
+    ".tiff": "image/tiff",
     ".mov": "video/quicktime",
     ".zip": "application/zip",
 }

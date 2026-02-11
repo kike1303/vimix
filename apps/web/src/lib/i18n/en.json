@@ -32,6 +32,14 @@
     "video-bg-remove": {
       "label": "Remove Video Background",
       "description": "Remove the background from a video and export with transparency in WebP, GIF, MOV, or PNG."
+    },
+    "image-bg-remove": {
+      "label": "Remove Image Background",
+      "description": "Remove the background from a single image and export as PNG or WebP with transparency."
+    },
+    "image-convert": {
+      "label": "Convert Image Format",
+      "description": "Convert an image to a different format with optional resizing and quality control."
     }
   },
   "options": {
@@ -39,7 +47,9 @@
     "resolution": "Output width",
     "model": "AI model",
     "refine_edges": "Refine edges",
-    "format": "Output format"
+    "format": "Output format",
+    "quality": "Quality",
+    "resize": "Resize width"
   },
   "theme": {
     "toggle": "Toggle theme"
