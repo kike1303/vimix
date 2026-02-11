@@ -44,6 +44,10 @@
     "video-convert": {
       "label": "Convertir formato de video",
       "description": "Convierte un video a otro formato, codec o resolucion con control total de calidad."
+    },
+    "video-to-gif": {
+      "label": "Video a GIF",
+      "description": "Convierte un clip de video a un GIF animado con colores optimizados y dithering."
     }
   },
   "options": {
@@ -93,6 +97,14 @@
     "audio": {
       "label": "Audio",
       "description": "Mantener o eliminar la pista de audio del video de salida."
+    },
+    "start": {
+      "label": "Tiempo de inicio (segundos)",
+      "description": "Segundo del video donde comienza el recorte para el GIF."
+    },
+    "duration": {
+      "label": "Duracion (segundos)",
+      "description": "Cuantos segundos del video se convierten en GIF. Duraciones mas largas producen archivos mas grandes."
     }
   },
   "theme": {

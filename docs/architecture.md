@@ -27,7 +27,8 @@ The **backend** runs the actual media processing (AI background removal, video/i
 │              │   GET  /jobs/:id/     │  │  ├ video-bg  │  │
 │              │        result         │  │  ├ image-bg  │  │
 │              │                       │  │  ├ img-conv  │  │
-└─────────────┘                       │  │  └ vid-conv  │  │
+│              │                       │  │  ├ vid-conv  │  │
+└─────────────┘                       │  │  └ vid-gif   │  │
                                        │  └─────────────┘  │
                                        └──────────────────┘
 ```
@@ -91,6 +92,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `image-bg-remove` | Remove image background → PNG/WebP | rembg |
 | `image-convert` | Convert image format + resize + quality | Pillow |
 | `video-convert` | Convert video codec/format/resolution | FFmpeg |
+| `video-to-gif` | Convert video clip to animated GIF | FFmpeg (palette-based two-pass) |
 
 ### Key files
 
@@ -104,6 +106,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `app/processors/image_bg_remove.py` | Image BG removal |
 | `app/processors/image_convert.py` | Image format conversion |
 | `app/processors/video_convert.py` | Video format conversion |
+| `app/processors/video_to_gif.py` | Video to GIF conversion |
 | `app/processors/registry.py` | Processor registration and lookup |
 | `app/services/job_manager.py` | In-memory job state + SSE pub/sub |
 | `app/services/file_manager.py` | File upload storage |

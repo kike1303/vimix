@@ -76,4 +76,5 @@ Uses shadcn-svelte CSS variables (oklch) defined in `app.css` for `:root` (light
 - **Python 3.9 compat** — always add `from __future__ import annotations` at top of Python files (needed for `X | Y` union syntax).
 - All API calls from the frontend are centralized in `apps/web/src/lib/api.ts`.
 - All UI strings must be translated — add keys to both `en.json` and `es.json`.
+- **Always update docs** — when adding a new processor or making relevant changes to an existing one, update the documentation in `docs/` (architecture.md, api.md, adding-processors.md as needed).
 - Temp files go in `services/processor/uploads/` and `services/processor/jobs/` (both gitignored).
