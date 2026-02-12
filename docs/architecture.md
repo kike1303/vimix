@@ -33,7 +33,8 @@ The **backend** runs the actual media processing (AI background removal, video/i
 │              │                       │  │  ├ vid-trim  │  │
 │              │                       │  │  ├ aud-ext   │  │
 │              │                       │  │  ├ vid-comp  │  │
-└─────────────┘                       │  │  └ img-wm    │  │
+│              │                       │  │  ├ img-wm    │  │
+└─────────────┘                       │  │  └ pdf-img   │  │
                                        │  └─────────────┘  │
                                        └──────────────────┘
 ```
@@ -84,7 +85,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 ## Backend – `services/processor/`
 
 - **Framework**: FastAPI
-- **Processing**: rembg (AI bg removal), FFmpeg, Pillow, img2webp
+- **Processing**: rembg (AI bg removal), FFmpeg, Pillow, img2webp, PyMuPDF
 - **Pattern**: Processor registry (extensible)
 - **Parallelism**: ThreadPoolExecutor for CPU-heavy tasks
 - **Python**: 3.9+ (`from __future__ import annotations`)
@@ -103,6 +104,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `audio-extract` | Extract audio track from video | FFmpeg |
 | `video-compress` | Reduce video file size | FFmpeg (H.264 slow preset) |
 | `image-watermark` | Add text watermark to image | Pillow (ImageDraw + alpha composite) |
+| `pdf-to-image` | Convert PDF pages to images | PyMuPDF + Pillow |
 
 ### Key files
 
@@ -122,6 +124,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `app/processors/audio_extract.py` | Audio extraction from video |
 | `app/processors/video_compress.py` | Video compression/optimization |
 | `app/processors/image_watermark.py` | Image watermark |
+| `app/processors/pdf_to_image.py` | PDF to image conversion |
 | `app/processors/registry.py` | Processor registration and lookup |
 | `app/services/job_manager.py` | In-memory job state + SSE pub/sub |
 | `app/services/file_manager.py` | File upload storage |

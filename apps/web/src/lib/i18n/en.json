@@ -68,6 +68,10 @@
     "image-watermark": {
       "label": "Image Watermark",
       "description": "Add a text watermark to an image with position, size, opacity, and color controls."
+    },
+    "pdf-to-image": {
+      "label": "PDF to Image",
+      "description": "Convert PDF pages to PNG, JPG, or WebP images. Multiple pages are exported as a ZIP."
     }
   },
   "options": {
@@ -153,6 +157,14 @@
     "color": {
       "label": "Color",
       "description": "Color of the watermark text."
+    },
+    "dpi": {
+      "label": "DPI",
+      "description": "Dots per inch. Higher DPI produces sharper images but larger file sizes."
+    },
+    "pages": {
+      "label": "Pages",
+      "description": "Convert all pages or only the first page."
     }
   },
   "theme": {

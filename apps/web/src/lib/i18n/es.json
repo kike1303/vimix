@@ -68,6 +68,10 @@
     "image-watermark": {
       "label": "Marca de agua",
       "description": "Agrega una marca de agua de texto a una imagen con controles de posicion, tamaño, opacidad y color."
+    },
+    "pdf-to-image": {
+      "label": "PDF a imagen",
+      "description": "Convierte paginas de un PDF a imagenes PNG, JPG o WebP. Multiples paginas se exportan como ZIP."
     }
   },
   "options": {
@@ -153,6 +157,14 @@
     "color": {
       "label": "Color",
       "description": "Color del texto de marca de agua."
+    },
+    "dpi": {
+      "label": "DPI",
+      "description": "Puntos por pulgada. Un DPI mas alto produce imagenes mas nitidas pero archivos mas grandes."
+    },
+    "pages": {
+      "label": "Paginas",
+      "description": "Convertir todas las paginas o solo la primera."
     }
   },
   "theme": {

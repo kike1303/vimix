@@ -9,6 +9,7 @@ from app.processors.video_trim import VideoTrimProcessor
 from app.processors.audio_extract import AudioExtractProcessor
 from app.processors.video_compress import VideoCompressProcessor
 from app.processors.image_watermark import ImageWatermarkProcessor
+from app.processors.pdf_to_image import PdfToImageProcessor
 
 _PROCESSORS: dict[str, BaseProcessor] = {}
 
@@ -28,6 +29,7 @@ _register(VideoTrimProcessor())
 _register(AudioExtractProcessor())
 _register(VideoCompressProcessor())
 _register(ImageWatermarkProcessor())
+_register(PdfToImageProcessor())
 
 
 def get_processor(processor_id: str) -> BaseProcessor:
