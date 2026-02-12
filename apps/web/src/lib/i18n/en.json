@@ -64,6 +64,10 @@
     "video-compress": {
       "label": "Compress Video",
       "description": "Reduce video file size with quality, resolution, and audio compression controls."
+    },
+    "image-watermark": {
+      "label": "Image Watermark",
+      "description": "Add a text watermark to an image with position, size, opacity, and color controls."
     }
   },
   "options": {
@@ -129,6 +133,26 @@
     "bitrate": {
       "label": "Bitrate",
       "description": "Higher bitrate means better audio quality but larger file size."
+    },
+    "text": {
+      "label": "Watermark text",
+      "description": "The text to display as a watermark on the image."
+    },
+    "position": {
+      "label": "Position",
+      "description": "Where to place the watermark on the image."
+    },
+    "size": {
+      "label": "Font size",
+      "description": "Size of the watermark text relative to the image width (percentage)."
+    },
+    "opacity": {
+      "label": "Opacity",
+      "description": "Transparency of the watermark. Lower values make it more subtle."
+    },
+    "color": {
+      "label": "Color",
+      "description": "Color of the watermark text."
     }
   },
   "theme": {

@@ -8,7 +8,7 @@ export interface OptionChoice {
 export interface OptionSchema {
   id: string;
   label: string;
-  type: "number" | "select";
+  type: "number" | "select" | "text";
   default: number | string;
   min?: number;
   max?: number;

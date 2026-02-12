@@ -91,6 +91,7 @@ Override `options_schema` to expose configurable options in the UI. The frontend
 
 - **`number`**: renders a range slider. Fields: `min`, `max`, `step`.
 - **`select`**: renders toggle buttons. Field: `choices` (list of `{"value", "label"}`).
+- **`text`**: renders a text input field.
 
 #### Conditional visibility with `showWhen`
 

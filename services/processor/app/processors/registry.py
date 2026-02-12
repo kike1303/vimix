@@ -8,6 +8,7 @@ from app.processors.image_compress import ImageCompressProcessor
 from app.processors.video_trim import VideoTrimProcessor
 from app.processors.audio_extract import AudioExtractProcessor
 from app.processors.video_compress import VideoCompressProcessor
+from app.processors.image_watermark import ImageWatermarkProcessor
 
 _PROCESSORS: dict[str, BaseProcessor] = {}
 
@@ -26,6 +27,7 @@ _register(ImageCompressProcessor())
 _register(VideoTrimProcessor())
 _register(AudioExtractProcessor())
 _register(VideoCompressProcessor())
+_register(ImageWatermarkProcessor())
 
 
 def get_processor(processor_id: str) -> BaseProcessor:

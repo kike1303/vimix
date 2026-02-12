@@ -64,6 +64,10 @@
     "video-compress": {
       "label": "Comprimir video",
       "description": "Reduce el tamaño de un video con controles de calidad, resolucion y compresion de audio."
+    },
+    "image-watermark": {
+      "label": "Marca de agua",
+      "description": "Agrega una marca de agua de texto a una imagen con controles de posicion, tamaño, opacidad y color."
     }
   },
   "options": {
@@ -129,6 +133,26 @@
     "bitrate": {
       "label": "Bitrate",
       "description": "Un bitrate mas alto significa mejor calidad de audio pero archivos mas grandes."
+    },
+    "text": {
+      "label": "Texto de marca de agua",
+      "description": "El texto que se muestra como marca de agua en la imagen."
+    },
+    "position": {
+      "label": "Posicion",
+      "description": "Donde colocar la marca de agua en la imagen."
+    },
+    "size": {
+      "label": "Tamaño de fuente",
+      "description": "Tamaño del texto de marca de agua relativo al ancho de la imagen (porcentaje)."
+    },
+    "opacity": {
+      "label": "Opacidad",
+      "description": "Transparencia de la marca de agua. Valores mas bajos la hacen mas sutil."
+    },
+    "color": {
+      "label": "Color",
+      "description": "Color del texto de marca de agua."
     }
   },
   "theme": {

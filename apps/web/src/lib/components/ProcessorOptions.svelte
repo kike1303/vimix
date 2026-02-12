@@ -2,6 +2,7 @@
   import type { OptionSchema } from "$lib/api";
   import { _ } from "svelte-i18n";
   import { Slider } from "$lib/components/ui/slider/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
   import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
   import * as Card from "$lib/components/ui/card/index.js";
   import * as Tooltip from "$lib/components/ui/tooltip/index.js";
@@ -79,6 +80,17 @@
                     {values[opt.id] ?? opt.default}
                   </span>
                 </div>
+              {:else if opt.type === "text"}
+                <Input
+                  type="text"
+                  value={String(values[opt.id] ?? opt.default ?? "")}
+                  oninput={(e) => {
+                    const target = e.currentTarget;
+                    if (target) values = { ...values, [opt.id]: target.value };
+                  }}
+                  {disabled}
+                  class="h-8 text-sm"
+                />
               {:else if opt.type === "select" && opt.choices}
                 <ToggleGroup.Root
                   type="single"

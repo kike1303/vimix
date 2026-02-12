@@ -63,7 +63,7 @@ Each processor includes an `options_schema` array that describes available optio
 |-------|------|-------------|
 | `id` | string | Unique option identifier |
 | `label` | string | Display name (fallback if no i18n key) |
-| `type` | `"number"` \| `"select"` | Control type |
+| `type` | `"number"` \| `"select"` \| `"text"` | Control type |
 | `default` | number \| string | Default value |
 | `min`, `max`, `step` | number | For `number` type only |
 | `choices` | array | For `select` type: `[{ "value", "label" }]` |
