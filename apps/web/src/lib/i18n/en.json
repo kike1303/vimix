@@ -48,6 +48,10 @@
     "video-to-gif": {
       "label": "Video to GIF",
       "description": "Convert a video clip to an animated GIF with optimized colors and dithering."
+    },
+    "image-compress": {
+      "label": "Compress Image",
+      "description": "Reduce image file size with quality, resize, and metadata stripping options."
     }
   },
   "options": {
@@ -105,6 +109,10 @@
     "duration": {
       "label": "Duration (seconds)",
       "description": "How many seconds of video to convert into a GIF. Longer durations produce larger files."
+    },
+    "strip_metadata": {
+      "label": "Strip metadata",
+      "description": "Remove EXIF data, camera info, and other metadata from the image. Reduces file size slightly."
     }
   },
   "theme": {

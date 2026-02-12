@@ -4,6 +4,7 @@ from app.processors.image_bg_remove import ImageBgRemoveProcessor
 from app.processors.image_convert import ImageConvertProcessor
 from app.processors.video_convert import VideoConvertProcessor
 from app.processors.video_to_gif import VideoToGifProcessor
+from app.processors.image_compress import ImageCompressProcessor
 
 _PROCESSORS: dict[str, BaseProcessor] = {}
 
@@ -18,6 +19,7 @@ _register(ImageBgRemoveProcessor())
 _register(ImageConvertProcessor())
 _register(VideoConvertProcessor())
 _register(VideoToGifProcessor())
+_register(ImageCompressProcessor())
 
 
 def get_processor(processor_id: str) -> BaseProcessor:

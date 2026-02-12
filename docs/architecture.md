@@ -28,7 +28,8 @@ The **backend** runs the actual media processing (AI background removal, video/i
 │              │        result         │  │  ├ image-bg  │  │
 │              │                       │  │  ├ img-conv  │  │
 │              │                       │  │  ├ vid-conv  │  │
-└─────────────┘                       │  │  └ vid-gif   │  │
+│              │                       │  │  ├ vid-gif   │  │
+└─────────────┘                       │  │  └ img-comp  │  │
                                        │  └─────────────┘  │
                                        └──────────────────┘
 ```
@@ -93,6 +94,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `image-convert` | Convert image format + resize + quality | Pillow |
 | `video-convert` | Convert video codec/format/resolution | FFmpeg |
 | `video-to-gif` | Convert video clip to animated GIF | FFmpeg (palette-based two-pass) |
+| `image-compress` | Compress image with quality/resize/metadata controls | Pillow |
 
 ### Key files
 
@@ -107,6 +109,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `app/processors/image_convert.py` | Image format conversion |
 | `app/processors/video_convert.py` | Video format conversion |
 | `app/processors/video_to_gif.py` | Video to GIF conversion |
+| `app/processors/image_compress.py` | Image compression/optimization |
 | `app/processors/registry.py` | Processor registration and lookup |
 | `app/services/job_manager.py` | In-memory job state + SSE pub/sub |
 | `app/services/file_manager.py` | File upload storage |
