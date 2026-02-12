@@ -102,6 +102,11 @@ _MEDIA_TYPES: dict[str, str] = {
     ".avi": "video/x-msvideo",
     ".mkv": "video/x-matroska",
     ".zip": "application/zip",
+    ".mp3": "audio/mpeg",
+    ".aac": "audio/aac",
+    ".wav": "audio/wav",
+    ".flac": "audio/flac",
+    ".ogg": "audio/ogg",
 }
 
 

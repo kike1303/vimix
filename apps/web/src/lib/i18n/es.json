@@ -56,6 +56,10 @@
     "video-trim": {
       "label": "Recortar video",
       "description": "Corta un segmento de un video seleccionando el tiempo de inicio y la duracion. Soporta copia rapida o re-codificacion."
+    },
+    "audio-extract": {
+      "label": "Extraer audio",
+      "description": "Extrae la pista de audio de un video como MP3, AAC, WAV, FLAC u OGG."
     }
   },
   "options": {
@@ -117,6 +121,10 @@
     "strip_metadata": {
       "label": "Eliminar metadatos",
       "description": "Elimina datos EXIF, informacion de camara y otros metadatos de la imagen. Reduce ligeramente el tamaño del archivo."
+    },
+    "bitrate": {
+      "label": "Bitrate",
+      "description": "Un bitrate mas alto significa mejor calidad de audio pero archivos mas grandes."
     }
   },
   "theme": {

@@ -137,6 +137,6 @@ GET /jobs/{job_id}/result
 
 Returns the processed file with the correct `Content-Type` and `Content-Disposition` headers.
 
-Supported result types: `image/webp`, `image/png`, `image/jpeg`, `image/gif`, `image/bmp`, `image/tiff`, `video/mp4`, `video/quicktime`, `video/webm`, `application/zip`.
+Supported result types: `image/webp`, `image/png`, `image/jpeg`, `image/gif`, `image/bmp`, `image/tiff`, `video/mp4`, `video/quicktime`, `video/webm`, `application/zip`, `audio/mpeg`, `audio/aac`, `audio/wav`, `audio/flac`, `audio/ogg`.
 
 Only available when job status is `completed`.

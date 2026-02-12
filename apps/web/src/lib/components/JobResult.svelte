@@ -5,6 +5,7 @@
   import Download from "lucide-svelte/icons/download";
   import FileArchive from "lucide-svelte/icons/file-archive";
   import FileVideo from "lucide-svelte/icons/file-video";
+  import FileAudio from "lucide-svelte/icons/file-audio";
 
   let {
     jobId,
@@ -27,7 +28,9 @@
   let downloadName = $derived(`${stem}${resultExtension}`);
 
   const PREVIEWABLE = new Set([".webp", ".gif", ".png", ".jpg", ".bmp"]);
+  const AUDIO = new Set([".mp3", ".aac", ".wav", ".flac", ".ogg"]);
   let previewable = $derived(PREVIEWABLE.has(resultExtension));
+  let isAudio = $derived(AUDIO.has(resultExtension));
 </script>
 
 <div class="flex flex-col items-center gap-6">
@@ -44,6 +47,15 @@
         alt="Result preview"
         class="max-h-96 max-w-full object-contain"
       />
+    </div>
+  {:else if isAudio}
+    <!-- Audio preview with player -->
+    <div class="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-10">
+      <FileAudio class="size-16 text-muted-foreground" />
+      <audio controls src={resultUrl} class="w-full max-w-sm">
+        <track kind="captions" />
+      </audio>
+      <p class="text-sm font-medium text-card-foreground">{downloadName}</p>
     </div>
   {:else}
     <!-- Non-previewable format: show icon + filename -->

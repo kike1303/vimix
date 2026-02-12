@@ -6,6 +6,7 @@ from app.processors.video_convert import VideoConvertProcessor
 from app.processors.video_to_gif import VideoToGifProcessor
 from app.processors.image_compress import ImageCompressProcessor
 from app.processors.video_trim import VideoTrimProcessor
+from app.processors.audio_extract import AudioExtractProcessor
 
 _PROCESSORS: dict[str, BaseProcessor] = {}
 
@@ -22,6 +23,7 @@ _register(VideoConvertProcessor())
 _register(VideoToGifProcessor())
 _register(ImageCompressProcessor())
 _register(VideoTrimProcessor())
+_register(AudioExtractProcessor())
 
 
 def get_processor(processor_id: str) -> BaseProcessor:
