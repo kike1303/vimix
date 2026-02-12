@@ -31,7 +31,8 @@ The **backend** runs the actual media processing (AI background removal, video/i
 │              │                       │  │  ├ vid-gif   │  │
 │              │                       │  │  ├ img-comp  │  │
 │              │                       │  │  ├ vid-trim  │  │
-└─────────────┘                       │  │  └ aud-ext   │  │
+│              │                       │  │  ├ aud-ext   │  │
+└─────────────┘                       │  │  └ vid-comp  │  │
                                        │  └─────────────┘  │
                                        └──────────────────┘
 ```
@@ -99,6 +100,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `image-compress` | Compress image with quality/resize/metadata controls | Pillow |
 | `video-trim` | Cut a segment from a video | FFmpeg |
 | `audio-extract` | Extract audio track from video | FFmpeg |
+| `video-compress` | Reduce video file size | FFmpeg (H.264 slow preset) |
 
 ### Key files
 
@@ -116,6 +118,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `app/processors/image_compress.py` | Image compression/optimization |
 | `app/processors/video_trim.py` | Video trimming/cutting |
 | `app/processors/audio_extract.py` | Audio extraction from video |
+| `app/processors/video_compress.py` | Video compression/optimization |
 | `app/processors/registry.py` | Processor registration and lookup |
 | `app/services/job_manager.py` | In-memory job state + SSE pub/sub |
 | `app/services/file_manager.py` | File upload storage |

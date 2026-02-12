@@ -60,6 +60,10 @@
     "audio-extract": {
       "label": "Extract Audio",
       "description": "Extract the audio track from a video as MP3, AAC, WAV, FLAC, or OGG."
+    },
+    "video-compress": {
+      "label": "Compress Video",
+      "description": "Reduce video file size with quality, resolution, and audio compression controls."
     }
   },
   "options": {

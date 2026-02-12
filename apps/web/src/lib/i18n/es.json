@@ -60,6 +60,10 @@
     "audio-extract": {
       "label": "Extraer audio",
       "description": "Extrae la pista de audio de un video como MP3, AAC, WAV, FLAC u OGG."
+    },
+    "video-compress": {
+      "label": "Comprimir video",
+      "description": "Reduce el tamaño de un video con controles de calidad, resolucion y compresion de audio."
     }
   },
   "options": {

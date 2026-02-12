@@ -6,6 +6,7 @@ import Film from "lucide-svelte/icons/film";
 import FileDown from "lucide-svelte/icons/file-down";
 import Scissors from "lucide-svelte/icons/scissors";
 import AudioLines from "lucide-svelte/icons/audio-lines";
+import Minimize from "lucide-svelte/icons/minimize";
 import Cpu from "lucide-svelte/icons/cpu";
 import type { ComponentType } from "svelte";
 
@@ -18,6 +19,7 @@ const icons: Record<string, ComponentType> = {
   "image-compress": FileDown,
   "video-trim": Scissors,
   "audio-extract": AudioLines,
+  "video-compress": Minimize,
 };
 
 export function getProcessorIcon(processorId: string): ComponentType {
