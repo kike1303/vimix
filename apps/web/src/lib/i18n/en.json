@@ -52,6 +52,10 @@
     "image-compress": {
       "label": "Compress Image",
       "description": "Reduce image file size with quality, resize, and metadata stripping options."
+    },
+    "video-trim": {
+      "label": "Trim Video",
+      "description": "Cut a segment from a video by selecting start time and duration. Supports fast copy or re-encoding."
     }
   },
   "options": {

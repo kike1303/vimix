@@ -4,6 +4,7 @@ import ArrowRightLeft from "lucide-svelte/icons/arrow-right-left";
 import FileVideo from "lucide-svelte/icons/file-video";
 import Film from "lucide-svelte/icons/film";
 import FileDown from "lucide-svelte/icons/file-down";
+import Scissors from "lucide-svelte/icons/scissors";
 import Cpu from "lucide-svelte/icons/cpu";
 import type { ComponentType } from "svelte";
 
@@ -14,6 +15,7 @@ const icons: Record<string, ComponentType> = {
   "video-convert": FileVideo,
   "video-to-gif": Film,
   "image-compress": FileDown,
+  "video-trim": Scissors,
 };
 
 export function getProcessorIcon(processorId: string): ComponentType {

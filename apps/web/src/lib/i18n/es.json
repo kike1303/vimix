@@ -52,6 +52,10 @@
     "image-compress": {
       "label": "Comprimir imagen",
       "description": "Reduce el tamaño de archivo de una imagen con controles de calidad, redimension y eliminacion de metadatos."
+    },
+    "video-trim": {
+      "label": "Recortar video",
+      "description": "Corta un segmento de un video seleccionando el tiempo de inicio y la duracion. Soporta copia rapida o re-codificacion."
     }
   },
   "options": {
