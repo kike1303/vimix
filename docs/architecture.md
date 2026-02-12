@@ -34,7 +34,8 @@ The **backend** runs the actual media processing (AI background removal, video/i
 │              │                       │  │  ├ aud-ext   │  │
 │              │                       │  │  ├ vid-comp  │  │
 │              │                       │  │  ├ img-wm    │  │
-└─────────────┘                       │  │  └ pdf-img   │  │
+│              │                       │  │  ├ pdf-img   │  │
+└─────────────┘                       │  │  └ vid-thumb │  │
                                        │  └─────────────┘  │
                                        └──────────────────┘
 ```
@@ -105,6 +106,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `video-compress` | Reduce video file size | FFmpeg (H.264 slow preset) |
 | `image-watermark` | Add text watermark to image | Pillow (ImageDraw + alpha composite) |
 | `pdf-to-image` | Convert PDF pages to images | PyMuPDF + Pillow |
+| `video-thumbnail` | Extract a frame from video as image | FFmpeg |
 
 ### Key files
 
@@ -125,6 +127,7 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `app/processors/video_compress.py` | Video compression/optimization |
 | `app/processors/image_watermark.py` | Image watermark |
 | `app/processors/pdf_to_image.py` | PDF to image conversion |
+| `app/processors/video_thumbnail.py` | Video thumbnail extraction |
 | `app/processors/registry.py` | Processor registration and lookup |
 | `app/services/job_manager.py` | In-memory job state + SSE pub/sub |
 | `app/services/file_manager.py` | File upload storage |

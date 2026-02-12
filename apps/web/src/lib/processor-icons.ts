@@ -9,6 +9,7 @@ import AudioLines from "lucide-svelte/icons/audio-lines";
 import Minimize from "lucide-svelte/icons/minimize";
 import Stamp from "lucide-svelte/icons/stamp";
 import FileText from "lucide-svelte/icons/file-text";
+import Camera from "lucide-svelte/icons/camera";
 import Cpu from "lucide-svelte/icons/cpu";
 import type { ComponentType } from "svelte";
 
@@ -24,6 +25,7 @@ const icons: Record<string, ComponentType> = {
   "video-compress": Minimize,
   "image-watermark": Stamp,
   "pdf-to-image": FileText,
+  "video-thumbnail": Camera,
 };
 
 export function getProcessorIcon(processorId: string): ComponentType {

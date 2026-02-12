@@ -72,6 +72,10 @@
     "pdf-to-image": {
       "label": "PDF to Image",
       "description": "Convert PDF pages to PNG, JPG, or WebP images. Multiple pages are exported as a ZIP."
+    },
+    "video-thumbnail": {
+      "label": "Video Thumbnail",
+      "description": "Extract a single frame from a video at a specific time as a PNG, JPG, or WebP image."
     }
   },
   "options": {
@@ -165,6 +169,10 @@
     "pages": {
       "label": "Pages",
       "description": "Convert all pages or only the first page."
+    },
+    "time": {
+      "label": "Time (seconds)",
+      "description": "The exact second in the video to capture as a thumbnail."
     }
   },
   "theme": {
