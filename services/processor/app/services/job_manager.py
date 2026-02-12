@@ -45,9 +45,26 @@ class Job:
         }
 
 
+@dataclass
+class Batch:
+    id: str
+    job_ids: list[str]
+    processor_id: str
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "job_ids": self.job_ids,
+            "processor_id": self.processor_id,
+            "created_at": self.created_at,
+        }
+
+
 class JobManager:
     def __init__(self) -> None:
         self._jobs: dict[str, Job] = {}
+        self._batches: dict[str, Batch] = {}
 
     def create(self, processor_id: str, original_filename: str) -> Job:
         job = Job(
@@ -96,6 +113,18 @@ class JobManager:
         job = self._jobs.get(job_id)
         if job and q in job._listeners:
             job._listeners.remove(q)
+
+    def create_batch(self, processor_id: str, job_ids: list[str]) -> Batch:
+        batch = Batch(
+            id=uuid.uuid4().hex[:12],
+            job_ids=job_ids,
+            processor_id=processor_id,
+        )
+        self._batches[batch.id] = batch
+        return batch
+
+    def get_batch(self, batch_id: str) -> Batch | None:
+        return self._batches.get(batch_id)
 
 
 job_manager = JobManager()

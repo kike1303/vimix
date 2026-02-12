@@ -129,6 +129,75 @@ data: {"status": "processing", "progress": 45.2, "message": "Removing background
 
 The stream closes automatically when status is `completed` or `failed`.
 
+### Create a Batch
+
+```
+POST /jobs/batch
+Content-Type: multipart/form-data
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `processor_id` | string | Processor ID from `/processors` |
+| `files` | file[] | Multiple files to process (all must match the processor's accepted extensions) |
+| `options` | string (JSON) | Optional: JSON-encoded options applied to all jobs |
+
+All file extensions are validated upfront — if any file has an invalid extension, the entire request is rejected.
+
+Response:
+
+```json
+{
+  "id": "b1c2d3e4f5a6",
+  "job_ids": ["a1b2c3d4e5f6", "f6e5d4c3b2a1", "112233445566"],
+  "processor_id": "image-compress",
+  "created_at": "2025-01-01T00:00:00+00:00"
+}
+```
+
+Each job in `job_ids` is an independent job that follows the standard job lifecycle. Use the existing SSE and result endpoints per job.
+
+### Get Batch Status
+
+```
+GET /jobs/batch/{batch_id}
+```
+
+Response: Batch metadata plus the current state of all jobs.
+
+```json
+{
+  "id": "b1c2d3e4f5a6",
+  "job_ids": ["a1b2c3d4e5f6", "f6e5d4c3b2a1"],
+  "processor_id": "image-compress",
+  "created_at": "2025-01-01T00:00:00+00:00",
+  "jobs": [
+    {
+      "id": "a1b2c3d4e5f6",
+      "processor_id": "image-compress",
+      "original_filename": "photo1.jpg",
+      "status": "completed",
+      "progress": 100,
+      "message": "Done!",
+      "result_extension": ".jpg",
+      "error": null,
+      "created_at": "2025-01-01T00:00:00+00:00"
+    },
+    {
+      "id": "f6e5d4c3b2a1",
+      "processor_id": "image-compress",
+      "original_filename": "photo2.png",
+      "status": "processing",
+      "progress": 45.2,
+      "message": "Compressing...",
+      "result_extension": "",
+      "error": null,
+      "created_at": "2025-01-01T00:00:00+00:00"
+    }
+  ]
+}
+```
+
 ### Download Result
 
 ```

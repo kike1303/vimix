@@ -4,6 +4,7 @@
   import {
     fetchProcessors,
     createJob,
+    createBatch,
     type Processor,
   } from "$lib/api";
   import { getProcessorIcon } from "$lib/processor-icons";
@@ -15,7 +16,7 @@
 
   let processors = $state<Processor[]>([]);
   let selectedProcessor = $state<Processor | null>(null);
-  let selectedFile = $state<File | null>(null);
+  let selectedFiles = $state<File[]>([]);
   let options = $state<Record<string, unknown>>({});
   let uploading = $state(false);
   let error = $state("");
@@ -28,7 +29,7 @@
 
   function selectProcessor(proc: Processor) {
     selectedProcessor = proc;
-    selectedFile = null;
+    selectedFiles = [];
     const defaults: Record<string, unknown> = {};
     for (const opt of proc.options_schema) {
       defaults[opt.id] = opt.default;
@@ -39,7 +40,7 @@
 
   function goBack() {
     selectedProcessor = null;
-    selectedFile = null;
+    selectedFiles = [];
     options = {};
     error = "";
   }
@@ -51,14 +52,19 @@
   }
 
   async function handleSubmit() {
-    if (!selectedProcessor || !selectedFile) return;
+    if (!selectedProcessor || selectedFiles.length === 0) return;
 
     uploading = true;
     error = "";
 
     try {
-      const job = await createJob(selectedProcessor.id, selectedFile, options);
-      goto(`/jobs/${job.id}`);
+      if (selectedFiles.length === 1) {
+        const job = await createJob(selectedProcessor.id, selectedFiles[0], options);
+        goto(`/jobs/${job.id}`);
+      } else {
+        const batch = await createBatch(selectedProcessor.id, selectedFiles, options);
+        goto(`/jobs/batch/${batch.id}`);
+      }
     } catch (e) {
       error = e instanceof Error ? e.message : $_("upload.errorUpload");
       uploading = false;
@@ -103,7 +109,7 @@
 
     <FileUpload
       processor={selectedProcessor}
-      bind:selectedFile
+      bind:selectedFiles
       bind:options
       onsubmit={handleSubmit}
       disabled={uploading}

@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
@@ -48,6 +48,62 @@ async def create_job(
     asyncio.create_task(_run_job(job.id, processor_id, input_path, output_dir, parsed_options))
 
     return job.to_dict()
+
+
+@router.post("/batch")
+async def create_batch(
+    files: List[UploadFile],
+    processor_id: str = Form(...),
+    options: Optional[str] = Form(None),
+):
+    try:
+        processor = get_processor(processor_id)
+    except KeyError:
+        raise HTTPException(status_code=400, detail=f"Unknown processor: {processor_id}")
+
+    parsed_options: dict = {}
+    if options:
+        try:
+            parsed_options = json.loads(options)
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="Invalid options JSON")
+
+    # Validate all file extensions upfront
+    for f in files:
+        ext = "." + (f.filename or "file").rsplit(".", 1)[-1].lower()
+        if ext not in processor.accepted_extensions:
+            raise HTTPException(
+                status_code=400,
+                detail=f"File type {ext} not accepted for '{f.filename}'. Expected: {processor.accepted_extensions}",
+            )
+
+    # Create jobs for each file
+    job_ids: list[str] = []
+    for f in files:
+        data = await f.read()
+        job = job_manager.create(processor_id, f.filename or "upload")
+        input_path = save_upload(job.id, f.filename or "upload", data)
+        output_dir = get_job_dir(job.id)
+        asyncio.create_task(_run_job(job.id, processor_id, input_path, output_dir, parsed_options))
+        job_ids.append(job.id)
+
+    batch = job_manager.create_batch(processor_id, job_ids)
+    return batch.to_dict()
+
+
+@router.get("/batch/{batch_id}")
+async def get_batch(batch_id: str):
+    batch = job_manager.get_batch(batch_id)
+    if batch is None:
+        raise HTTPException(status_code=404, detail="Batch not found")
+
+    jobs = []
+    for jid in batch.job_ids:
+        job = job_manager.get(jid)
+        if job:
+            jobs.append(job.to_dict())
+
+    return {**batch.to_dict(), "jobs": jobs}
 
 
 @router.get("/{job_id}")

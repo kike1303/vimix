@@ -10,10 +10,13 @@
   },
   "upload": {
     "optionsLabel": "Options",
-    "dropzone": "Drag & drop your file here, or click to browse",
+    "dropzone": "Drag & drop your files here, or click to browse",
     "accepted": "Accepted: {extensions}",
     "changeFile": "Click or drop to change",
     "submit": "Start Processing",
+    "submitBatch": "Process {count} files",
+    "removeFile": "Remove file",
+    "fileCount": "{count} files selected",
     "submitting": "Uploading...",
     "errorConnect": "Could not connect to the API. Is the processor service running?",
     "errorUpload": "Upload failed"
@@ -174,6 +177,16 @@
       "label": "Time (seconds)",
       "description": "The exact second in the video to capture as a thumbnail."
     }
+  },
+  "batch": {
+    "title": "Batch Processing",
+    "processing": "Processing {count} files",
+    "allComplete": "All files processed successfully!",
+    "someErrors": "{count} file(s) failed to process.",
+    "overallProgress": "{completed} of {total} completed",
+    "notFound": "Batch not found",
+    "downloadAll": "Download All",
+    "backToHome": "New job"
   },
   "theme": {
     "toggle": "Toggle theme"

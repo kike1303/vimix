@@ -10,10 +10,13 @@
   },
   "upload": {
     "optionsLabel": "Opciones",
-    "dropzone": "Arrastra y suelta tu archivo aqui, o haz clic para buscar",
+    "dropzone": "Arrastra y suelta tus archivos aqui, o haz clic para buscar",
     "accepted": "Aceptados: {extensions}",
     "changeFile": "Haz clic o arrastra para cambiar",
     "submit": "Iniciar procesamiento",
+    "submitBatch": "Procesar {count} archivos",
+    "removeFile": "Eliminar archivo",
+    "fileCount": "{count} archivos seleccionados",
     "submitting": "Subiendo...",
     "errorConnect": "No se pudo conectar a la API. Esta corriendo el servicio?",
     "errorUpload": "Error al subir el archivo"
@@ -174,6 +177,16 @@
       "label": "Tiempo (segundos)",
       "description": "El segundo exacto del video para capturar como miniatura."
     }
+  },
+  "batch": {
+    "title": "Procesamiento por lotes",
+    "processing": "Procesando {count} archivos",
+    "allComplete": "Todos los archivos se procesaron correctamente!",
+    "someErrors": "{count} archivo(s) fallaron al procesar.",
+    "overallProgress": "{completed} de {total} completados",
+    "notFound": "Lote no encontrado",
+    "downloadAll": "Descargar todo",
+    "backToHome": "Nuevo trabajo"
   },
   "theme": {
     "toggle": "Cambiar tema"

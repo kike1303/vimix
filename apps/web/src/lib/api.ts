@@ -43,6 +43,17 @@ export interface ProgressEvent {
   message: string;
 }
 
+export interface Batch {
+  id: string;
+  job_ids: string[];
+  processor_id: string;
+  created_at: string;
+}
+
+export interface BatchWithJobs extends Batch {
+  jobs: Job[];
+}
+
 export async function fetchProcessors(): Promise<Processor[]> {
   const res = await fetch(`${API_URL}/processors`);
   if (!res.ok) throw new Error("Failed to fetch processors");
@@ -95,6 +106,32 @@ export function subscribeProgress(
   };
 
   return () => es.close();
+}
+
+export async function createBatch(
+  processorId: string,
+  files: File[],
+  options: Record<string, unknown> = {},
+): Promise<Batch> {
+  const form = new FormData();
+  form.append("processor_id", processorId);
+  for (const file of files) {
+    form.append("files", file);
+  }
+  form.append("options", JSON.stringify(options));
+
+  const res = await fetch(`${API_URL}/jobs/batch`, { method: "POST", body: form });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Upload failed" }));
+    throw new Error(err.detail || "Upload failed");
+  }
+  return res.json();
+}
+
+export async function fetchBatch(batchId: string): Promise<BatchWithJobs> {
+  const res = await fetch(`${API_URL}/jobs/batch/${batchId}`);
+  if (!res.ok) throw new Error("Batch not found");
+  return res.json();
 }
 
 export function getResultUrl(jobId: string): string {
