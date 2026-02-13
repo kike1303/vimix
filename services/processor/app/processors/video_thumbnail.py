@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from app.processors.base import BaseProcessor, ProgressCallback
+from app.services.binary_paths import get_ffmpeg
 
 
 class VideoThumbnailProcessor(BaseProcessor):
@@ -83,7 +84,7 @@ class VideoThumbnailProcessor(BaseProcessor):
             filters.append(f"scale={resolution}:-2")
 
         cmd = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-ss", str(time),
             "-i", str(input_path),
             "-frames:v", "1",

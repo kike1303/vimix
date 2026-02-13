@@ -6,7 +6,10 @@
   "home": {
     "title": "Que quieres hacer?",
     "subtitle": "Elige una herramienta para comenzar.",
-    "back": "Volver"
+    "back": "Volver",
+    "loading": "Iniciando...",
+    "loadingSub": "Preparando el motor de procesamiento",
+    "loadingFailed": "No se pudo iniciar el motor de procesamiento. Reinicia la app."
   },
   "upload": {
     "optionsLabel": "Opciones",

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from app.processors.base import BaseProcessor, ProgressCallback
+from app.services.binary_paths import get_ffmpeg
 
 # Codec → FFmpeg encoder + pixel format + file extension
 _CODECS: dict[str, dict[str, str]] = {
@@ -118,7 +119,7 @@ class VideoConvertProcessor(BaseProcessor):
 
         # Build FFmpeg command
         cmd: list[str] = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-i", str(input_path),
         ]
 

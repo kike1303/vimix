@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from app.processors.base import BaseProcessor, ProgressCallback
+from app.services.binary_paths import get_ffmpeg
 
 
 class VideoTrimProcessor(BaseProcessor):
@@ -79,7 +80,7 @@ class VideoTrimProcessor(BaseProcessor):
         await on_progress(10, "Trimming video...")
 
         cmd = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-ss", str(start),
             "-t", str(duration),
             "-i", str(input_path),

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from app.processors.base import BaseProcessor, ProgressCallback
+from app.services.binary_paths import get_ffmpeg
 
 
 class VideoToGifProcessor(BaseProcessor):
@@ -83,7 +84,7 @@ class VideoToGifProcessor(BaseProcessor):
         await on_progress(10, "Generating color palette...")
 
         palette_cmd = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-ss", str(start),
             "-t", str(duration),
             "-i", str(input_path),
@@ -104,7 +105,7 @@ class VideoToGifProcessor(BaseProcessor):
         await on_progress(50, "Creating GIF...")
 
         gif_cmd = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-ss", str(start),
             "-t", str(duration),
             "-i", str(input_path),

@@ -11,6 +11,7 @@ from PIL import Image
 from rembg import new_session, remove
 
 from app.processors.base import BaseProcessor, ProgressCallback
+from app.services.binary_paths import get_ffmpeg, get_img2webp
 
 # Reuse a single thread pool across jobs so threads (and their ONNX sessions)
 # stay warm between requests.
@@ -204,7 +205,7 @@ class VideoBgRemoveProcessor(BaseProcessor):
             vf += f",scale={resolution}:-2"
 
         proc = await asyncio.create_subprocess_exec(
-            "ffmpeg",
+            get_ffmpeg(),
             "-hide_banner",
             "-loglevel",
             "error",
@@ -224,7 +225,7 @@ class VideoBgRemoveProcessor(BaseProcessor):
         self, frames_dir: Path, output: Path, delay_ms: int
     ) -> None:
         frames = sorted(frames_dir.glob("*.png"))
-        args = ["img2webp", "-loop", "0", "-d", str(delay_ms)]
+        args = [get_img2webp(), "-loop", "0", "-d", str(delay_ms)]
         args += [str(f) for f in frames]
         args += ["-o", str(output)]
 
@@ -249,7 +250,7 @@ class VideoBgRemoveProcessor(BaseProcessor):
     ) -> None:
         """Assemble a MOV with ProRes 4444 (alpha) via FFmpeg."""
         proc = await asyncio.create_subprocess_exec(
-            "ffmpeg",
+            get_ffmpeg(),
             "-hide_banner",
             "-loglevel", "error",
             "-framerate", str(fps),

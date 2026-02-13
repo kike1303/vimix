@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from app.processors.base import BaseProcessor, ProgressCallback
+from app.services.binary_paths import get_ffmpeg
 
 _FORMAT_CONFIG: dict[str, dict[str, Any]] = {
     "mp3": {"ext": ".mp3", "codec": "libmp3lame", "default_bitrate": "192k"},
@@ -70,7 +71,7 @@ class AudioExtractProcessor(BaseProcessor):
         await on_progress(10, "Extracting audio...")
 
         cmd = [
-            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-i", str(input_path),
             "-vn",
             "-c:a", config["codec"],

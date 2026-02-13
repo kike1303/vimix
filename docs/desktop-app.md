@@ -1,4 +1,4 @@
-# Desktop App Plan (Tauri 2)
+# Desktop App (Tauri 2)
 
 Package Vimix as a native desktop application using Tauri 2. The user installs it and everything runs locally on their machine — no server needed.
 
@@ -17,132 +17,155 @@ Vimix.app
 ├── Tauri shell (Rust)
 │   └── Manages window, lifecycle, sidecar
 ├── Frontend (existing SvelteKit, loaded in webview)
-└── Sidecar binary (PyInstaller bundle)
-    ├── FastAPI server (starts on a random local port)
-    ├── rembg + ONNX model
-    └── FFmpeg + img2webp (bundled)
+├── Sidecar binary (PyInstaller bundle)
+│   ├── FastAPI server (starts on a random local port)
+│   ├── rembg + ONNX model (u2netp ~4.4 MB)
+│   └── All Python dependencies
+└── Resources
+    ├── ffmpeg (static, ~59 MB)
+    ├── ffprobe (static, ~59 MB)
+    └── img2webp (static, ~2.5 MB)
 ```
 
 On app launch:
-1. Tauri starts the sidecar (Python bundle) on a random available port
-2. Tauri opens the webview pointing to the SvelteKit app
-3. The frontend talks to the local sidecar API (same as current architecture)
-4. On app close, Tauri kills the sidecar process
+1. Tauri finds a free port and starts the sidecar (Python bundle) on it
+2. Tauri sets `FFMPEG_BIN`, `FFPROBE_BIN`, and `IMG2WEBP_BIN` env vars pointing to bundled resources
+3. Tauri sets `window.__VIMIX_API_PORT__` so the frontend knows where the API lives
+4. Tauri opens the webview pointing to the SvelteKit app
+5. The frontend talks to the local sidecar API (same as current architecture)
+6. On app close, Tauri kills the sidecar process
 
-## What can be reused as-is
+## Current status
 
-- `apps/web/` — the entire SvelteKit frontend (no changes)
-- `services/processor/app/` — the entire FastAPI backend (no changes)
-- All processors, job manager, file manager — unchanged
+- [x] Tauri CLI and dependencies installed in `apps/web/`
+- [x] `src-tauri/` configured: window, capabilities, plugins
+- [x] `--port` CLI argument added to `main.py` for dynamic port binding
+- [x] `api.ts` detects Tauri mode and uses the dynamic port
+- [x] SvelteKit switched to static adapter with SPA fallback
+- [x] `+layout.ts` disables SSR (required for Tauri)
+- [x] Placeholder app icons generated
+- [x] Rust code compiles (`cargo check` passes)
+- [x] PyInstaller spec created (`vimix-processor.spec`)
+- [x] Python sidecar builds as single binary (~147 MB)
+- [x] Sidecar wired up: Tauri spawns it with `--port {random}`
+- [x] `binary_paths.py` resolves ffmpeg/ffprobe/img2webp from env vars, `_MEIPASS`, or system PATH
+- [x] Static ARM64 macOS builds of ffmpeg, ffprobe, img2webp downloaded and placed in `src-tauri/resources/`
+- [x] Tauri bundles resources via `bundle.resources` in `tauri.conf.json`
+- [x] Rust code sets env vars before spawning sidecar so processors find bundled binaries
+- [x] Download script: `scripts/download-desktop-binaries.sh`
 
-## What needs to be built
+## Building the desktop app
 
-### 1. Add Tauri to the SvelteKit app
+### Prerequisites
 
-```bash
-cd apps/web
-pnpm add -D @tauri-apps/cli @tauri-apps/api
-pnpm tauri init
-```
+- Rust toolchain (install via [rustup](https://rustup.rs/))
+- Node.js + pnpm
+- Python 3.9+ with venv (for building the sidecar)
 
-Configure `src-tauri/tauri.conf.json`:
-- Window title, size, icon
-- Sidecar configuration pointing to the Python bundle
-- Allowed API permissions
-
-### 2. Bundle the Python backend with PyInstaller
+### Step 1: Build the Python sidecar
 
 ```bash
 cd services/processor
+source venv/bin/activate
 pip install pyinstaller
-pyinstaller --onedir --name Vimix-processor app/main.py
+pyinstaller vimix-processor.spec
 ```
 
-This creates a standalone directory with the Python interpreter, all dependencies, and the ONNX models baked in. No Python installation required on the user's machine.
+This creates `dist/Vimix-processor` — a single binary (~147 MB) containing the Python interpreter, FastAPI, rembg, ONNX model, and all dependencies.
 
-Key PyInstaller considerations:
-- Include ONNX model files as data files
-- Include FFmpeg and img2webp binaries
-- Test on each target OS separately
-- Use `--onedir` (not `--onefile`) for faster startup
+Copy it to the Tauri binaries directory with the platform suffix:
 
-### 3. Sidecar management in Tauri
+```bash
+# macOS ARM64
+cp dist/Vimix-processor apps/web/src-tauri/binaries/Vimix-processor-aarch64-apple-darwin
 
-In the Tauri Rust code or via the `@tauri-apps/plugin-shell` plugin:
-- Find a free port at startup
-- Launch the PyInstaller sidecar with `--port {free_port}`
-- Pass the port to the frontend via Tauri's IPC or an env variable
-- Kill the sidecar on app exit
-
-The FastAPI `main.py` needs a minor change to accept `--port` as a CLI argument:
-
-```python
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=8787)
-    args = parser.parse_args()
-    uvicorn.run(app, host="127.0.0.1", port=args.port)
+# macOS Intel
+cp dist/Vimix-processor apps/web/src-tauri/binaries/Vimix-processor-x86_64-apple-darwin
 ```
 
-### 4. Bundle FFmpeg and img2webp
+### Step 2: Download static binaries
 
-These need to be included per-platform:
-- **macOS**: download static builds, include in the app bundle
-- **Windows**: download static `.exe` builds
-- **Linux**: download static builds or document as a prerequisite
+```bash
+./scripts/download-desktop-binaries.sh
+```
 
-The processor code should resolve binary paths relative to the app bundle instead of relying on system PATH.
+This downloads platform-appropriate static builds of ffmpeg, ffprobe, and img2webp into `apps/web/src-tauri/resources/`.
 
-### 5. Auto-updates
+### Step 3: Build the Tauri app
 
-Tauri has built-in updater support (`@tauri-apps/plugin-updater`):
-- Host update manifests on GitHub Releases
-- The app checks for updates on startup
-- Users get prompted to update
+```bash
+# Development (opens desktop window, hot-reloads frontend)
+pnpm tauri:dev
 
-## Installer sizes (estimated)
+# Build for current platform
+pnpm tauri:build
+```
+
+Output locations:
+- macOS: `src-tauri/target/release/bundle/dmg/`
+- Windows: `src-tauri/target/release/bundle/msi/`
+- Linux: `src-tauri/target/release/bundle/appimage/`
+
+## Binary path resolution
+
+The `binary_paths.py` module resolves ffmpeg/ffprobe/img2webp in this order:
+
+1. **Environment variable** (`FFMPEG_BIN`, `FFPROBE_BIN`, `IMG2WEBP_BIN`) — set by Tauri Rust code pointing to bundled resources
+2. **PyInstaller `_MEIPASS` directory** — for binaries bundled inside the sidecar itself
+3. **System PATH** (`shutil.which()`) — fallback for development
+
+## Sidecar naming convention
+
+Tauri requires platform-suffixed sidecar binaries:
+
+```
+src-tauri/binaries/Vimix-processor-aarch64-apple-darwin   # macOS ARM
+src-tauri/binaries/Vimix-processor-x86_64-apple-darwin    # macOS Intel
+src-tauri/binaries/Vimix-processor-x86_64-pc-windows-msvc.exe  # Windows
+src-tauri/binaries/Vimix-processor-x86_64-unknown-linux-gnu    # Linux
+```
+
+## Web vs Desktop
+
+Both modes share 99% of the code. The only difference:
+
+| Aspect | Web (`pnpm dev`) | Desktop (`pnpm tauri dev`) |
+|--------|-------------------|---------------------------|
+| API URL | `http://localhost:8787` (fixed) | `http://localhost:{random}` (dynamic) |
+| Backend | User starts manually | Tauri launches sidecar automatically |
+| ffmpeg | System PATH | Bundled in resources |
+| Adapter | Static (SPA) | Static (SPA) |
+| Distribution | Deploy to Vercel/any host | `.dmg` / `.msi` / `.AppImage` |
+
+Detection in `api.ts`:
+```ts
+if (window.__VIMIX_API_PORT__) {
+  // Desktop mode — use Tauri-injected port
+} else {
+  // Web mode — use fixed port or env variable
+}
+```
+
+## Installer sizes (actual)
 
 | Component | Size |
 |-----------|------|
 | Tauri shell + frontend | ~10-15 MB |
-| Python sidecar (PyInstaller) | ~150-200 MB |
-| ONNX model (u2net) | ~170 MB |
-| ONNX model (u2netp) | ~5 MB |
-| FFmpeg static build | ~80-100 MB |
-| img2webp | ~2 MB |
-| **Total (with u2netp only)** | **~250-320 MB** |
-| **Total (with all models)** | **~450-500 MB** |
+| Python sidecar (PyInstaller onefile) | ~147 MB |
+| ffmpeg static | ~59 MB |
+| ffprobe static | ~59 MB |
+| img2webp static | ~2.5 MB |
+| **Total** | **~280 MB** |
 
-Consider downloading larger models on first use instead of bundling them to keep the installer smaller.
+The ONNX model (u2netp, ~4.4 MB) is bundled inside the sidecar. Larger models (u2net ~168 MB, isnet ~170 MB) can be downloaded on first use.
 
-## Build commands per platform
+## What still needs to happen
 
-```bash
-# Development
-cd apps/web
-pnpm tauri dev
-
-# Build for current platform
-pnpm tauri build
-
-# Output locations
-# macOS: src-tauri/target/release/bundle/dmg/
-# Windows: src-tauri/target/release/bundle/msi/
-# Linux: src-tauri/target/release/bundle/appimage/
-```
-
-## Implementation checklist
-
-- [ ] Install Tauri CLI and initialize in `apps/web/`
-- [ ] Create PyInstaller spec for the Python backend
-- [ ] Add `--port` CLI argument to `main.py` for dynamic port binding
-- [ ] Configure Tauri sidecar to launch and manage the Python process
-- [ ] Bundle FFmpeg and img2webp per platform
-- [ ] Update binary path resolution in processors to support bundled binaries
-- [ ] Configure app icon, name, and window settings
-- [ ] Test on macOS
-- [ ] Test on Windows
-- [ ] Test on Linux
-- [ ] Set up auto-updater with GitHub Releases
-- [ ] Optional: download large models on first use instead of bundling
+- [ ] Design and set real app icon (`npx @tauri-apps/cli icon path/to/icon.png`)
+- [ ] End-to-end test: `pnpm tauri:dev` with sidecar and resource binaries
+- [ ] Test on macOS Intel
+- [ ] Set up Windows build (PyInstaller + static ffmpeg for Windows)
+- [ ] Set up Linux build (PyInstaller + static ffmpeg for Linux)
+- [ ] Set up auto-updater with GitHub Releases (`@tauri-apps/plugin-updater`)
+- [ ] Optional: download large ONNX models on first use instead of bundling
+- [ ] Optional: code-sign the app for macOS notarization

@@ -17,6 +17,16 @@ venv/
 services/processor/uploads/
 services/processor/jobs/
 
+# Tauri
+apps/web/src-tauri/target/
+apps/web/src-tauri/gen/
+apps/web/src-tauri/binaries/
+apps/web/src-tauri/resources/
+
+# PyInstaller
+services/processor/build/
+services/processor/dist/
+
 # OS
 .DS_Store
 Thumbs.db

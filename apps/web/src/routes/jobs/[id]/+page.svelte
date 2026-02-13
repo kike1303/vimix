@@ -15,7 +15,7 @@
   let status = $state("pending");
   let error = $state("");
 
-  let jobId = $derived(page.params.id);
+  let jobId = $derived(page.params.id as string);
 
   $effect(() => {
     const id = jobId;

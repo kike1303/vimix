@@ -6,7 +6,10 @@
   "home": {
     "title": "What do you want to do?",
     "subtitle": "Choose a tool to get started.",
-    "back": "Back"
+    "back": "Back",
+    "loading": "Starting up...",
+    "loadingSub": "Preparing the processing engine",
+    "loadingFailed": "Could not start the processing engine. Please restart the app."
   },
   "upload": {
     "optionsLabel": "Options",
