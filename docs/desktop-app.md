@@ -176,7 +176,6 @@ Desktop builds are automated via GitHub Actions. Pushing a git tag triggers the 
 | Platform | Runner | Triple | Bundle format |
 |----------|--------|--------|---------------|
 | macOS ARM64 | `macos-latest` | `aarch64-apple-darwin` | `.dmg` |
-| macOS Intel | `macos-13` | `x86_64-apple-darwin` | `.dmg` |
 | Windows x64 | `windows-latest` | `x86_64-pc-windows-msvc` | NSIS `.exe` |
 | Linux x64 | `ubuntu-22.04` | `x86_64-unknown-linux-gnu` | `.AppImage`, `.deb` |
 

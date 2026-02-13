@@ -50,10 +50,6 @@ jobs:
             runner: macos-latest
             triple: aarch64-apple-darwin
             platform: macos
-          - label: macOS Intel
-            runner: macos-13
-            triple: x86_64-apple-darwin
-            platform: macos
           - label: Windows x64
             runner: windows-latest
             triple: x86_64-pc-windows-msvc
@@ -95,9 +91,9 @@ jobs:
             source venv/bin/activate
           fi
 
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
 
           # Filter uvloop on Windows (not supported)
           if [[ "${{ matrix.platform }}" == "windows" ]]; then
@@ -157,17 +153,14 @@ jobs:
             patchelf
 
       # --- Build + upload ---
+      # --- Build + upload ---
+      # Note: To enable macOS code signing, add APPLE_CERTIFICATE, APPLE_CERTIFICATE_PASSWORD,
+      # APPLE_SIGNING_IDENTITY, APPLE_ID, APPLE_PASSWORD, and APPLE_TEAM_ID as repository secrets.
+      # The tauri-action will pick them up automatically when present in the environment.
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS signing (optional — builds work unsigned)
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE || '' }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD || '' }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY || '' }}
-          APPLE_ID: ${{ secrets.APPLE_ID || '' }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD || '' }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID || '' }}
         with:
           projectPath: apps/web
           releaseId: ${{ needs.create-release.outputs.release_id }}
