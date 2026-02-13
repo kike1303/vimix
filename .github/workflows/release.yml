@@ -92,13 +92,16 @@ jobs:
           fi
 
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-          python -m pip install pyinstaller
 
-          # Filter uvloop on Windows (not supported)
+          # uvloop doesn't support Windows — filter it before installing
           if [[ "${{ matrix.platform }}" == "windows" ]]; then
-            pip uninstall -y uvloop 2>/dev/null || true
+            grep -vi uvloop requirements.txt > requirements-filtered.txt
+            python -m pip install -r requirements-filtered.txt
+          else
+            python -m pip install -r requirements.txt
           fi
+
+          python -m pip install pyinstaller
 
       # --- Pre-download ONNX model ---
       - name: Download u2netp ONNX model
