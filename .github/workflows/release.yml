@@ -136,6 +136,19 @@ jobs:
         shell: bash
         run: bash scripts/download-desktop-binaries.sh
 
+      # --- Sign resource binaries for macOS notarization ---
+      - name: Sign resource binaries (macOS)
+        if: matrix.platform == 'macos'
+        shell: bash
+        run: |
+          RESOURCES_DIR="apps/web/src-tauri/resources"
+          for bin in "$RESOURCES_DIR"/ffmpeg "$RESOURCES_DIR"/ffprobe "$RESOURCES_DIR"/img2webp; do
+            echo "Signing $bin"
+            codesign --sign "$APPLE_SIGNING_IDENTITY" --force --timestamp --options runtime "$bin"
+          done
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+
       # --- Rust ---
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable

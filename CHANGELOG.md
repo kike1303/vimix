@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-02-13
+
+### Fixed
+
+- Sign bundled resource binaries (ffmpeg, ffprobe, img2webp) for macOS notarization
+
 ## [0.2.1] - 2026-02-13
 
 ### Added
