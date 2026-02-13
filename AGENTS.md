@@ -30,6 +30,10 @@ cd services/processor && source venv/bin/activate && pip install -r requirements
 
 # Add a shadcn-svelte component
 cd apps/web && pnpm dlx shadcn-svelte@latest add <component-name>
+
+# Tauri desktop app (requires Rust toolchain)
+pnpm tauri:dev    # Dev mode with hot-reload
+pnpm tauri:build  # Build .dmg/.msi/.AppImage
 ```
 
 ## Architecture

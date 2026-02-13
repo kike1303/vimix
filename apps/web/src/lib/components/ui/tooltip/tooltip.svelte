@@ -3,9 +3,9 @@
 	import type { ComponentProps } from "svelte";
 
 	let {
-		openDelay = 200,
+		delayDuration = 200,
 		...restProps
 	}: ComponentProps<typeof TooltipPrimitive.Root> = $props();
 </script>
 
-<TooltipPrimitive.Root {openDelay} {...restProps} />
+<TooltipPrimitive.Root {delayDuration} {...restProps} />
