@@ -179,7 +179,10 @@
     "time": {
       "label": "Tiempo (segundos)",
       "description": "El segundo exacto del video para capturar como miniatura."
-    }
+    },
+    "original": "Original",
+    "custom": "Personalizado",
+    "maxSource": "(fuente: {width} px)"
   },
   "batch": {
     "title": "Procesamiento por lotes",

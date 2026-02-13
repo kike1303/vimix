@@ -49,16 +49,12 @@ class ImageConvertProcessor(BaseProcessor):
             {
                 "id": "resize",
                 "label": "Resize width",
-                "type": "select",
+                "type": "dimension",
                 "default": "original",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "1920", "label": "1920 px"},
-                    {"value": "1280", "label": "1280 px"},
-                    {"value": "1024", "label": "1024 px"},
-                    {"value": "512", "label": "512 px"},
-                    {"value": "256", "label": "256 px"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [1920, 1280, 1024, 512, 256],
+                "allow_original": True,
             },
         ]
 

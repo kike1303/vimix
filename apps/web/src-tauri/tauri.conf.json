@@ -36,7 +36,7 @@
       "icons/icon.ico"
     ],
     "externalBin": ["binaries/Vimix-processor"],
-    "resources": ["resources/ffmpeg", "resources/ffprobe", "resources/img2webp"]
+    "resources": ["resources/ffmpeg*", "resources/ffprobe*", "resources/img2webp*"]
   },
   "plugins": {
     "shell": {

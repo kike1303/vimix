@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-check:
+    name: Frontend type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter web check
+
+  python-check:
+    name: Python syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile all Python files
+        run: |
+          find services/processor -name '*.py' -exec python -m py_compile {} +
+
+  version-sync:
+    name: Version sync check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify versions match across files
+        run: |
+          node -e "
+          const fs = require('fs');
+
+          const rootPkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const webPkg = JSON.parse(fs.readFileSync('apps/web/package.json', 'utf8'));
+          const tauriConf = JSON.parse(fs.readFileSync('apps/web/src-tauri/tauri.conf.json', 'utf8'));
+
+          const cargoToml = fs.readFileSync('apps/web/src-tauri/Cargo.toml', 'utf8');
+          const cargoMatch = cargoToml.match(/^version\s*=\s*\"([^\"]+)\"/m);
+          const cargoVersion = cargoMatch ? cargoMatch[1] : 'NOT_FOUND';
+
+          const versions = {
+            'package.json': rootPkg.version,
+            'apps/web/package.json': webPkg.version,
+            'tauri.conf.json': tauriConf.version,
+            'Cargo.toml': cargoVersion,
+          };
+
+          console.log('Versions found:');
+          const entries = Object.entries(versions);
+          for (const [file, ver] of entries) {
+            console.log('  ' + file + ': ' + ver);
+          }
+
+          const unique = new Set(Object.values(versions));
+          if (unique.size !== 1) {
+            console.error('\nERROR: Version mismatch detected!');
+            process.exit(1);
+          }
+          console.log('\nAll versions match: ' + rootPkg.version);
+          "

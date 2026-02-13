@@ -37,7 +37,7 @@ class BaseProcessor(ABC):
         Each entry is a dict with:
             id:      unique key sent in the options payload
             label:   human-readable name for the UI
-            type:    "number" | "select"
+            type:    "number" | "select" | "text" | "dimension"
             default: default value
 
         For type "number":

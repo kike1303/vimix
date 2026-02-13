@@ -45,16 +45,12 @@ class ImageCompressProcessor(BaseProcessor):
             {
                 "id": "resize",
                 "label": "Max width",
-                "type": "select",
+                "type": "dimension",
                 "default": "original",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "1920", "label": "1920 px"},
-                    {"value": "1280", "label": "1280 px"},
-                    {"value": "1024", "label": "1024 px"},
-                    {"value": "800", "label": "800 px"},
-                    {"value": "640", "label": "640 px"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [1920, 1280, 1024, 800, 640],
+                "allow_original": True,
             },
             {
                 "id": "format",

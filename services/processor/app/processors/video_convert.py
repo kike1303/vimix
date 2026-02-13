@@ -53,15 +53,12 @@ class VideoConvertProcessor(BaseProcessor):
             {
                 "id": "resolution",
                 "label": "Resolution",
-                "type": "select",
+                "type": "dimension",
                 "default": "original",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "1920", "label": "1920p"},
-                    {"value": "1280", "label": "1280p"},
-                    {"value": "720", "label": "720p"},
-                    {"value": "480", "label": "480p"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [1920, 1280, 720, 480],
+                "allow_original": True,
                 "showWhen": {"codec": ["h264", "h265", "vp9", "prores"]},
             },
             {

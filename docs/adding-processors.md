@@ -92,6 +92,20 @@ Override `options_schema` to expose configurable options in the UI. The frontend
 - **`number`**: renders a range slider. Fields: `min`, `max`, `step`.
 - **`select`**: renders toggle buttons. Field: `choices` (list of `{"value", "label"}`).
 - **`text`**: renders a text input field.
+- **`dimension`**: renders adaptive preset buttons + custom input for pixel dimensions. Fields: `min`, `max`, `presets` (list of integers), `allow_original` (bool). Presets are filtered to values ≤ the source file's width. Example:
+  ```python
+  {
+      "id": "resolution",
+      "type": "dimension",
+      "label": "Resolution",
+      "default": "original",
+      "min": 16,
+      "max": 7680,
+      "presets": [1920, 1280, 854, 640],
+      "allow_original": True,
+  }
+  ```
+  The backend validates that dimension values are within `min`/`max`.
 
 #### Conditional visibility with `showWhen`
 

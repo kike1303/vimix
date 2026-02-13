@@ -27,9 +27,10 @@ fn spawn_sidecar(app: &tauri::AppHandle, port: u16) {
         .resource_dir()
         .expect("Failed to resolve resource directory");
 
-    let ffmpeg_path = resource_dir.join("resources").join("ffmpeg");
-    let ffprobe_path = resource_dir.join("resources").join("ffprobe");
-    let img2webp_path = resource_dir.join("resources").join("img2webp");
+    let ext = if cfg!(windows) { ".exe" } else { "" };
+    let ffmpeg_path = resource_dir.join("resources").join(format!("ffmpeg{ext}"));
+    let ffprobe_path = resource_dir.join("resources").join(format!("ffprobe{ext}"));
+    let img2webp_path = resource_dir.join("resources").join(format!("img2webp{ext}"));
 
     // Set env vars so the Python sidecar can find the bundled binaries
     std::env::set_var("FFMPEG_BIN", &ffmpeg_path);

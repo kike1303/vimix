@@ -15,6 +15,34 @@ from app.services.file_manager import save_upload, get_job_dir
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
+def _validate_options(processor, options: dict) -> None:
+    """Validate dimension-type options against min/max constraints."""
+    for opt in processor.options_schema:
+        if opt.get("type") != "dimension":
+            continue
+        opt_id = opt["id"]
+        value = options.get(opt_id)
+        if value is None:
+            continue
+        str_val = str(value)
+        if str_val == "original" and opt.get("allow_original", False):
+            continue
+        try:
+            num = int(str_val)
+        except (ValueError, TypeError):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid dimension value for '{opt_id}': {value}",
+            )
+        opt_min = opt.get("min", 1)
+        opt_max = opt.get("max", 99999)
+        if num < opt_min or num > opt_max:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Dimension '{opt_id}' must be between {opt_min} and {opt_max}, got {num}",
+            )
+
+
 @router.post("")
 async def create_job(
     file: UploadFile,
@@ -39,6 +67,8 @@ async def create_job(
             parsed_options = json.loads(options)
         except json.JSONDecodeError:
             raise HTTPException(status_code=400, detail="Invalid options JSON")
+
+    _validate_options(processor, parsed_options)
 
     data = await file.read()
     job = job_manager.create(processor_id, file.filename or "upload")
@@ -67,6 +97,8 @@ async def create_batch(
             parsed_options = json.loads(options)
         except json.JSONDecodeError:
             raise HTTPException(status_code=400, detail="Invalid options JSON")
+
+    _validate_options(processor, parsed_options)
 
     # Validate all file extensions upfront
     for f in files:

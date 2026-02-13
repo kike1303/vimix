@@ -10,7 +10,8 @@
     "build": "pnpm --filter web build",
     "preview": "pnpm --filter web preview",
     "tauri:dev": "pnpm --filter web tauri dev",
-    "tauri:build": "pnpm --filter web tauri build"
+    "tauri:build": "bash scripts/build-sidecar.sh && pnpm --filter web tauri build",
+    "tauri:sidecar": "bash scripts/build-sidecar.sh"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

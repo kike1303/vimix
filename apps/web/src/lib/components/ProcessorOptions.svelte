@@ -11,10 +11,12 @@
   let {
     schema,
     values = $bindable(),
+    sourceWidth = null,
     disabled = false,
   }: {
     schema: OptionSchema[];
     values: Record<string, unknown>;
+    sourceWidth?: number | null;
     disabled?: boolean;
   } = $props();
 
@@ -29,6 +31,9 @@
     const translated = $_(key);
     return translated !== key ? translated : null;
   }
+
+  /** Tracks which dimension options are in "custom input" mode. */
+  let customDimensions = $state<Set<string>>(new Set());
 
   function isVisible(opt: OptionSchema): boolean {
     if (!opt.showWhen) return true;
@@ -110,6 +115,85 @@
                     </ToggleGroup.Item>
                   {/each}
                 </ToggleGroup.Root>
+              {:else if opt.type === "dimension"}
+                {@const current = String(values[opt.id] ?? opt.default)}
+                {@const isCustom = customDimensions.has(opt.id)}
+                {@const filteredPresets = (opt.presets ?? []).filter((p) => sourceWidth == null || p <= sourceWidth)}
+                <div class="flex flex-wrap items-center gap-1.5">
+                  {#if opt.allow_original}
+                    <button
+                      type="button"
+                      class="h-8 rounded-md border px-3 text-xs font-medium transition
+                        {!isCustom && current === 'original'
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-background text-foreground hover:bg-accent'}"
+                      onclick={() => {
+                        customDimensions.delete(opt.id);
+                        customDimensions = new Set(customDimensions);
+                        values = { ...values, [opt.id]: "original" };
+                      }}
+                      {disabled}
+                    >
+                      {$_("options.original")}
+                    </button>
+                  {/if}
+                  {#each filteredPresets as preset (preset)}
+                    <button
+                      type="button"
+                      class="h-8 rounded-md border px-3 text-xs font-medium transition
+                        {!isCustom && current === String(preset)
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-background text-foreground hover:bg-accent'}"
+                      onclick={() => {
+                        customDimensions.delete(opt.id);
+                        customDimensions = new Set(customDimensions);
+                        values = { ...values, [opt.id]: String(preset) };
+                      }}
+                      {disabled}
+                    >
+                      {preset} px
+                    </button>
+                  {/each}
+                  <button
+                    type="button"
+                    class="h-8 rounded-md border px-3 text-xs font-medium transition
+                      {isCustom
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border bg-background text-foreground hover:bg-accent'}"
+                    onclick={() => {
+                      if (!isCustom) {
+                        customDimensions.add(opt.id);
+                        customDimensions = new Set(customDimensions);
+                      }
+                    }}
+                    {disabled}
+                  >
+                    {$_("options.custom")}
+                  </button>
+                </div>
+                {#if isCustom}
+                  <div class="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min={opt.min ?? 16}
+                      max={opt.max ?? 7680}
+                      step={1}
+                      value={current}
+                      oninput={(e) => {
+                        const target = e.currentTarget;
+                        if (target) values = { ...values, [opt.id]: target.value };
+                      }}
+                      {disabled}
+                      class="h-8 w-24 text-sm"
+                    />
+                    <span class="text-xs text-muted-foreground">px</span>
+                    {#if sourceWidth != null}
+                      <span class="text-xs text-muted-foreground">
+                        {$_("options.maxSource", { values: { width: sourceWidth } })}
+                      </span>
+                    {/if}
+                  </div>
+                {/if}
               {/if}
             </div>
           {/if}

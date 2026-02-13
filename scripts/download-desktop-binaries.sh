@@ -5,8 +5,12 @@
 #   ./scripts/download-desktop-binaries.sh
 #
 # This script downloads platform-specific static builds of ffmpeg, ffprobe,
-# and img2webp into apps/web/src-tauri/resources/. Currently supports macOS
-# (arm64 and x86_64).
+# and img2webp into apps/web/src-tauri/resources/.
+#
+# Supported platforms:
+#   - macOS (arm64, x86_64)
+#   - Linux (x86_64)
+#   - Windows (x86_64, via Git Bash / MSYS2 on GitHub Actions)
 
 set -euo pipefail
 
@@ -62,6 +66,60 @@ download_macos() {
     ls -lh "$RESOURCES_DIR/"
 }
 
+download_linux() {
+    local tmpdir
+    tmpdir="$(mktemp -d)"
+
+    echo ""
+    echo "=== Downloading ffmpeg + ffprobe (Linux x86_64) ==="
+    curl -L -o "$tmpdir/ffmpeg.tar.xz" \
+        "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz"
+    tar xJf "$tmpdir/ffmpeg.tar.xz" -C "$tmpdir"
+    cp "$tmpdir/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg" "$RESOURCES_DIR/ffmpeg"
+    cp "$tmpdir/ffmpeg-master-latest-linux64-gpl/bin/ffprobe" "$RESOURCES_DIR/ffprobe"
+
+    echo ""
+    echo "=== Downloading img2webp (Linux x86_64) ==="
+    curl -L -o "$tmpdir/libwebp.tar.gz" \
+        "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-linux-x86-64.tar.gz"
+    tar xzf "$tmpdir/libwebp.tar.gz" -C "$tmpdir"
+    cp "$tmpdir/libwebp-1.6.0-linux-x86-64/bin/img2webp" "$RESOURCES_DIR/img2webp"
+
+    chmod +x "$RESOURCES_DIR/ffmpeg" "$RESOURCES_DIR/ffprobe" "$RESOURCES_DIR/img2webp"
+
+    rm -rf "$tmpdir"
+
+    echo ""
+    echo "=== Done ==="
+    ls -lh "$RESOURCES_DIR/"
+}
+
+download_windows() {
+    local tmpdir
+    tmpdir="$(mktemp -d)"
+
+    echo ""
+    echo "=== Downloading ffmpeg + ffprobe (Windows x86_64) ==="
+    curl -L -o "$tmpdir/ffmpeg.zip" \
+        "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+    unzip -o "$tmpdir/ffmpeg.zip" -d "$tmpdir"
+    cp "$tmpdir/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe" "$RESOURCES_DIR/ffmpeg.exe"
+    cp "$tmpdir/ffmpeg-master-latest-win64-gpl/bin/ffprobe.exe" "$RESOURCES_DIR/ffprobe.exe"
+
+    echo ""
+    echo "=== Downloading img2webp (Windows x86_64) ==="
+    curl -L -o "$tmpdir/libwebp.zip" \
+        "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-windows-x64.zip"
+    unzip -o "$tmpdir/libwebp.zip" -d "$tmpdir"
+    cp "$tmpdir/libwebp-1.6.0-windows-x64/bin/img2webp.exe" "$RESOURCES_DIR/img2webp.exe"
+
+    rm -rf "$tmpdir"
+
+    echo ""
+    echo "=== Done ==="
+    ls -lh "$RESOURCES_DIR/"
+}
+
 case "$OS" in
     Darwin)
         case "$ARCH" in
@@ -71,10 +129,13 @@ case "$OS" in
         esac
         ;;
     Linux)
-        echo "Linux static binaries are not yet configured."
-        echo "Please download ffmpeg, ffprobe, and img2webp for Linux $ARCH"
-        echo "and place them in: $RESOURCES_DIR/"
-        exit 1
+        case "$ARCH" in
+            x86_64) download_linux ;;
+            *)      echo "Unsupported Linux architecture: $ARCH"; exit 1 ;;
+        esac
+        ;;
+    MINGW*|MSYS*|CYGWIN*)
+        download_windows
         ;;
     *)
         echo "Unsupported OS: $OS"

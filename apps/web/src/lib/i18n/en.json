@@ -179,7 +179,10 @@
     "time": {
       "label": "Time (seconds)",
       "description": "The exact second in the video to capture as a thumbnail."
-    }
+    },
+    "original": "Original",
+    "custom": "Custom",
+    "maxSource": "(source: {width} px)"
   },
   "batch": {
     "title": "Batch Processing",

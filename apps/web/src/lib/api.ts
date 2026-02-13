@@ -13,7 +13,7 @@ export function isTauri(): boolean {
 export async function initApiUrl(): Promise<string> {
   if (_apiBaseUrl) return _apiBaseUrl;
 
-  if (isTauri()) {
+  if (isTauri() && !import.meta.env.DEV) {
     try {
       const { invoke } = await import("@tauri-apps/api/core");
       const port = await invoke<number>("get_api_port");
@@ -58,13 +58,55 @@ export interface OptionChoice {
 export interface OptionSchema {
   id: string;
   label: string;
-  type: "number" | "select" | "text";
+  type: "number" | "select" | "text" | "dimension";
   default: number | string;
   min?: number;
   max?: number;
   step?: number;
   choices?: OptionChoice[];
+  presets?: number[];
+  allow_original?: boolean;
   showWhen?: Record<string, string | string[]>;
+}
+
+export interface FileMetadata {
+  width: number;
+  height: number;
+}
+
+export function extractDimensions(file: File): Promise<FileMetadata | null> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const type = file.type;
+
+    if (type.startsWith("image/")) {
+      const img = new Image();
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = () => {
+        resolve(null);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    } else if (type.startsWith("video/")) {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = () => {
+        resolve({ width: video.videoWidth, height: video.videoHeight });
+        URL.revokeObjectURL(url);
+      };
+      video.onerror = () => {
+        resolve(null);
+        URL.revokeObjectURL(url);
+      };
+      video.src = url;
+    } else {
+      URL.revokeObjectURL(url);
+      resolve(null);
+    }
+  });
 }
 
 export interface Processor {

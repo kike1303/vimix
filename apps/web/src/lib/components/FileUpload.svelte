@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Processor } from "$lib/api";
+  import { type Processor, extractDimensions } from "$lib/api";
   import { _ } from "svelte-i18n";
   import { Button } from "$lib/components/ui/button/index.js";
   import Upload from "lucide-svelte/icons/upload";
@@ -22,6 +22,19 @@
 
   let dragover = $state(false);
   let fileInput = $state<HTMLInputElement | null>(null);
+  let sourceWidth = $state<number | null>(null);
+
+  $effect(() => {
+    if (selectedFiles.length === 0) {
+      sourceWidth = null;
+      return;
+    }
+    const files = selectedFiles;
+    Promise.all(files.map((f) => extractDimensions(f))).then((results) => {
+      const widths = results.filter((r): r is { width: number; height: number } => r !== null).map((r) => r.width);
+      sourceWidth = widths.length > 0 ? Math.min(...widths) : null;
+    });
+  });
 
   let acceptedExtensions = $derived(
     processor.accepted_extensions.join(","),
@@ -90,6 +103,7 @@
     <ProcessorOptions
       schema={processor.options_schema}
       bind:values={options}
+      {sourceWidth}
       {disabled}
     />
   {/if}

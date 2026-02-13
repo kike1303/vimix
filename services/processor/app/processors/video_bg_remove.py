@@ -40,15 +40,12 @@ class VideoBgRemoveProcessor(BaseProcessor):
             {
                 "id": "resolution",
                 "label": "Output width",
-                "type": "select",
+                "type": "dimension",
                 "default": "original",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "1024", "label": "1024 px"},
-                    {"value": "512", "label": "512 px"},
-                    {"value": "256", "label": "256 px"},
-                    {"value": "128", "label": "128 px"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [1024, 512, 256, 128],
+                "allow_original": True,
             },
             {
                 "id": "model",

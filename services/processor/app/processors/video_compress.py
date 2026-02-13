@@ -29,15 +29,12 @@ class VideoCompressProcessor(BaseProcessor):
             {
                 "id": "resolution",
                 "label": "Resolution",
-                "type": "select",
+                "type": "dimension",
                 "default": "original",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "1920", "label": "1080p"},
-                    {"value": "1280", "label": "720p"},
-                    {"value": "854", "label": "480p"},
-                    {"value": "640", "label": "360p"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [1920, 1280, 854, 640],
+                "allow_original": True,
             },
             {
                 "id": "audio",

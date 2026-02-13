@@ -118,6 +118,54 @@ cd apps/web/src-tauri && cargo check
 pnpm dev:all
 ```
 
+## CI Checks
+
+Every push to `main` and every pull request runs these checks automatically:
+
+- **Frontend type-check** — `pnpm --filter web check` (svelte-check + TypeScript)
+- **Python syntax** — `py_compile` on all `.py` files (fast, no pip install needed)
+- **Version sync** — verifies `package.json`, `apps/web/package.json`, `tauri.conf.json`, and `Cargo.toml` all have the same version
+
+If CI fails, check the workflow logs — the version sync check will print which files are mismatched.
+
+## Releases
+
+Releases are automated via GitHub Actions. Pushing a version tag builds desktop apps for all platforms and creates a GitHub Release.
+
+### Steps to release
+
+```bash
+# 1. Bump version in all config files
+./scripts/bump-version.sh 0.2.0
+
+# 2. Update CHANGELOG.md with the new version's changes
+
+# 3. Commit and tag
+git add -A
+git commit -m "chore: bump version to 0.2.0"
+git tag v0.2.0
+
+# 4. Push (triggers the release workflow)
+git push origin main --tags
+```
+
+The release workflow will:
+1. Create a draft GitHub Release
+2. Build desktop apps for macOS (ARM + Intel), Windows, and Linux in parallel
+3. Upload all artifacts (`.dmg`, `.exe`, `.AppImage`, `.deb`)
+4. Publish the release once all builds succeed
+
+### Version files
+
+The `bump-version.sh` script updates version in these 5 locations:
+- `package.json` (root)
+- `apps/web/package.json`
+- `apps/web/src-tauri/tauri.conf.json`
+- `apps/web/src-tauri/Cargo.toml`
+- `services/processor/app/main.py`
+
+Always use the script to keep them in sync — CI will catch mismatches.
+
 ## Pull Requests
 
 1. Fork the repo and create your branch from `main`

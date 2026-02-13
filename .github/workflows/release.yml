@@ -1,0 +1,189 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create.outputs.result }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Create draft GitHub Release
+        id: create
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: context.ref.replace('refs/tags/', ''),
+              name: `Vimix v${process.env.VERSION}`,
+              draft: true,
+              prerelease: context.ref.includes('-'),
+            });
+            return data.id;
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+  build-desktop:
+    name: Build ${{ matrix.label }}
+    needs: create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: macOS ARM64
+            runner: macos-latest
+            triple: aarch64-apple-darwin
+            platform: macos
+          - label: macOS Intel
+            runner: macos-13
+            triple: x86_64-apple-darwin
+            platform: macos
+          - label: Windows x64
+            runner: windows-latest
+            triple: x86_64-pc-windows-msvc
+            platform: windows
+          - label: Linux x64
+            runner: ubuntu-22.04
+            triple: x86_64-unknown-linux-gnu
+            platform: linux
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Node + pnpm ---
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # --- Python + venv ---
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create venv and install Python deps
+        shell: bash
+        run: |
+          cd services/processor
+          python -m venv venv
+
+          if [[ "${{ matrix.platform }}" == "windows" ]]; then
+            source venv/Scripts/activate
+          else
+            source venv/bin/activate
+          fi
+
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+          # Filter uvloop on Windows (not supported)
+          if [[ "${{ matrix.platform }}" == "windows" ]]; then
+            pip uninstall -y uvloop 2>/dev/null || true
+          fi
+
+      # --- Pre-download ONNX model ---
+      - name: Download u2netp ONNX model
+        shell: bash
+        run: |
+          cd services/processor
+
+          if [[ "${{ matrix.platform }}" == "windows" ]]; then
+            source venv/Scripts/activate
+          else
+            source venv/bin/activate
+          fi
+
+          python -c "
+          from rembg.sessions import U2netpSession
+          import pathlib, os
+          home = os.environ.get('U2NET_HOME', str(pathlib.Path.home() / '.u2net'))
+          os.makedirs(home, exist_ok=True)
+          # Importing the session triggers the model download
+          U2netpSession.download_models()
+          print('Model downloaded to', home)
+          "
+
+      # --- Build Python sidecar ---
+      - name: Build sidecar with PyInstaller
+        shell: bash
+        run: bash scripts/build-sidecar.sh
+
+      # --- Download static binaries ---
+      - name: Download ffmpeg/ffprobe/img2webp
+        shell: bash
+        run: bash scripts/download-desktop-binaries.sh
+
+      # --- Rust ---
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/web/src-tauri -> target
+
+      # --- Linux system deps ---
+      - name: Install Linux system dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      # --- Build + upload ---
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS signing (optional — builds work unsigned)
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE || '' }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD || '' }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY || '' }}
+          APPLE_ID: ${{ secrets.APPLE_ID || '' }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID || '' }}
+        with:
+          projectPath: apps/web
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+
+  publish-release:
+    name: Publish release
+    needs: [create-release, build-desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Undraft release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: ${{ needs.create-release.outputs.release_id }},
+              draft: false,
+            });

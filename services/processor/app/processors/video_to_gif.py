@@ -47,15 +47,12 @@ class VideoToGifProcessor(BaseProcessor):
             {
                 "id": "resolution",
                 "label": "Width",
-                "type": "select",
+                "type": "dimension",
                 "default": "480",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "640", "label": "640 px"},
-                    {"value": "480", "label": "480 px"},
-                    {"value": "320", "label": "320 px"},
-                    {"value": "240", "label": "240 px"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [640, 480, 320, 240],
+                "allow_original": True,
             },
         ]
 

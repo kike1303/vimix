@@ -159,13 +159,53 @@ if (window.__VIMIX_API_PORT__) {
 
 The ONNX model (u2netp, ~4.4 MB) is bundled inside the sidecar. Larger models (u2net ~168 MB, isnet ~170 MB) can be downloaded on first use.
 
+## CI/CD and Releases
+
+Desktop builds are automated via GitHub Actions. Pushing a git tag triggers the full pipeline.
+
+### Release workflow
+
+1. Run `./scripts/bump-version.sh 0.2.0` to update version in all 5 config files
+2. Update `CHANGELOG.md` with the new version's changes
+3. Commit, tag (`git tag v0.2.0`), and push with tags
+4. GitHub Actions builds desktop apps for all platforms in parallel
+5. A GitHub Release is created with all artifacts attached
+
+### Platform matrix
+
+| Platform | Runner | Triple | Bundle format |
+|----------|--------|--------|---------------|
+| macOS ARM64 | `macos-latest` | `aarch64-apple-darwin` | `.dmg` |
+| macOS Intel | `macos-13` | `x86_64-apple-darwin` | `.dmg` |
+| Windows x64 | `windows-latest` | `x86_64-pc-windows-msvc` | NSIS `.exe` |
+| Linux x64 | `ubuntu-22.04` | `x86_64-unknown-linux-gnu` | `.AppImage`, `.deb` |
+
+### CI checks (on PRs)
+
+Every pull request runs three checks automatically:
+- **Frontend type-check** — `svelte-check` ensures no TypeScript errors
+- **Python syntax** — `py_compile` catches syntax errors without installing deps
+- **Version sync** — verifies all 4 version files match
+
+### macOS code signing (optional)
+
+To produce signed/notarized macOS builds, add these repository secrets:
+
+| Secret | Description |
+|--------|-------------|
+| `APPLE_CERTIFICATE` | Base64-encoded .p12 certificate |
+| `APPLE_CERTIFICATE_PASSWORD` | Certificate password |
+| `APPLE_SIGNING_IDENTITY` | e.g. "Developer ID Application: Your Name (TEAM_ID)" |
+| `APPLE_ID` | Apple ID email |
+| `APPLE_PASSWORD` | App-specific password |
+| `APPLE_TEAM_ID` | 10-character team ID |
+
+Builds work unsigned without these secrets — users will see a Gatekeeper warning on first launch.
+
 ## What still needs to happen
 
 - [ ] Design and set real app icon (`npx @tauri-apps/cli icon path/to/icon.png`)
 - [ ] End-to-end test: `pnpm tauri:dev` with sidecar and resource binaries
-- [ ] Test on macOS Intel
-- [ ] Set up Windows build (PyInstaller + static ffmpeg for Windows)
-- [ ] Set up Linux build (PyInstaller + static ffmpeg for Linux)
 - [ ] Set up auto-updater with GitHub Releases (`@tauri-apps/plugin-updater`)
 - [ ] Optional: download large ONNX models on first use instead of bundling
 - [ ] Optional: code-sign the app for macOS notarization

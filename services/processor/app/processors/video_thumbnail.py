@@ -40,14 +40,12 @@ class VideoThumbnailProcessor(BaseProcessor):
             {
                 "id": "resolution",
                 "label": "Resolution",
-                "type": "select",
+                "type": "dimension",
                 "default": "original",
-                "choices": [
-                    {"value": "original", "label": "Original"},
-                    {"value": "1920", "label": "1920 px"},
-                    {"value": "1280", "label": "1280 px"},
-                    {"value": "640", "label": "640 px"},
-                ],
+                "min": 16,
+                "max": 7680,
+                "presets": [1920, 1280, 640],
+                "allow_original": True,
             },
             {
                 "id": "quality",
