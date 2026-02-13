@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -33,6 +33,7 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
+    "@tauri-apps/plugin-updater": "^2.10.0",
     "svelte-i18n": "^4.0.1"
   }
 }

@@ -199,5 +199,13 @@
   },
   "lang": {
     "toggle": "Language"
+  },
+  "update": {
+    "available": "Version {version} is available",
+    "install": "Update",
+    "later": "Later",
+    "downloading": "Downloading update...",
+    "restarting": "Restarting...",
+    "error": "Update failed"
   }
 }

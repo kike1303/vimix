@@ -6,6 +6,7 @@
   import { Tooltip } from "bits-ui";
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import LangToggle from "$lib/components/LangToggle.svelte";
+  import UpdateNotifier from "$lib/components/UpdateNotifier.svelte";
 
   let { children } = $props();
 </script>
@@ -43,5 +44,7 @@
       Vimix &mdash; {$_("app.tagline")}
     </footer>
   </div>
+
+  <UpdateNotifier />
 {/if}
 </Tooltip.Provider>
