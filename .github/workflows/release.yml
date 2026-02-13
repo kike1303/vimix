@@ -141,12 +141,29 @@ jobs:
         if: matrix.platform == 'macos'
         shell: bash
         run: |
+          # Import certificate into a temporary keychain
+          KEYCHAIN="resource-signing.keychain-db"
+          KEYCHAIN_PASS="$(openssl rand -base64 32)"
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN"
+
+          echo "$APPLE_CERTIFICATE" | base64 --decode > /tmp/cert.p12
+          security import /tmp/cert.p12 -k "$KEYCHAIN" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          rm /tmp/cert.p12
+
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASS" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+
+          # Sign each resource binary
           RESOURCES_DIR="apps/web/src-tauri/resources"
           for bin in "$RESOURCES_DIR"/ffmpeg "$RESOURCES_DIR"/ffprobe "$RESOURCES_DIR"/img2webp; do
             echo "Signing $bin"
             codesign --sign "$APPLE_SIGNING_IDENTITY" --force --timestamp --options runtime "$bin"
           done
         env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
 
       # --- Rust ---
