@@ -76,8 +76,8 @@
                     min={opt.min ?? 1}
                     max={opt.max ?? 100}
                     step={opt.step ?? 1}
-                    value={[Number(values[opt.id] ?? opt.default)]}
-                    onValueChange={(v: number[]) => (values = { ...values, [opt.id]: v[0] })}
+                    value={Number(values[opt.id] ?? opt.default)}
+                    onValueChange={(v: number) => (values = { ...values, [opt.id]: v })}
                     {disabled}
                     class="flex-1"
                   />

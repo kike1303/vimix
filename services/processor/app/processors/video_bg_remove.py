@@ -51,11 +51,11 @@ class VideoBgRemoveProcessor(BaseProcessor):
                 "id": "model",
                 "label": "AI model",
                 "type": "select",
-                "default": "u2netp",
+                "default": "u2net",
                 "choices": [
-                    {"value": "u2netp", "label": "Fast (u2netp)"},
                     {"value": "u2net", "label": "Quality (u2net)"},
                     {"value": "isnet-general-use", "label": "ISNet"},
+                    {"value": "u2netp", "label": "Fast (u2netp)"},
                 ],
             },
             {

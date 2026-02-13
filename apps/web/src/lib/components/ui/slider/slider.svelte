@@ -5,20 +5,17 @@
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
+		type = "single",
 		orientation = "horizontal",
 		class: className,
 		...restProps
 	}: Record<string, any> = $props();
 </script>
 
-<!--
-Discriminated Unions + Destructing (required for bindable) do not
-get along, so we shut typescript up by casting `value` to `never`.
--->
 <SliderPrimitive.Root
 	bind:ref
-	bind:value={value as never}
-	type="single"
+	{value}
+	{type}
 	data-slot="slider"
 	{orientation}
 	class={cn(
