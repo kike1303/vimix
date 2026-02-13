@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getResultUrl } from "$lib/api";
+  import { getResultUrl, downloadResult } from "$lib/api";
   import { _ } from "svelte-i18n";
   import { Button } from "$lib/components/ui/button/index.js";
   import Download from "lucide-svelte/icons/download";
@@ -70,7 +70,7 @@
     </div>
   {/if}
 
-  <Button href={resultUrl} size="lg" class="gap-2">
+  <Button size="lg" class="gap-2" onclick={() => downloadResult(jobId, downloadName)}>
     <Download class="size-4" />
     {$_("job.download")} {downloadName}
   </Button>

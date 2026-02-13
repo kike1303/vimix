@@ -21,8 +21,9 @@
   <div class="flex min-h-screen flex-col bg-background text-foreground">
     <header class="border-b border-border">
       <div class="mx-auto flex max-w-4xl items-center justify-between px-6 py-3">
-        <a href="/" class="text-lg font-bold tracking-tight">
-          <span class="text-primary">Vi</span>mix
+        <a href="/" class="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <img src="/icon.png" alt="Vimix" class="size-7 rounded-md" />
+          Vimix
         </a>
         <div class="flex items-center gap-1">
           <span class="mr-2 hidden text-xs text-muted-foreground sm:block">

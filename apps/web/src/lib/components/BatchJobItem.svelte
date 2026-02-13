@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from "svelte-i18n";
-  import { getResultUrl } from "$lib/api";
+  import { getResultUrl, downloadResult } from "$lib/api";
   import { Progress } from "$lib/components/ui/progress/index.js";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import CircleCheck from "lucide-svelte/icons/circle-check";
@@ -57,13 +57,13 @@
 
   <!-- Download link when completed -->
   {#if status === "completed"}
-    <a
-      href={resultUrl}
-      download={downloadName}
+    <button
+      type="button"
+      onclick={() => downloadResult(jobId, downloadName)}
       class="shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition"
       aria-label={$_("job.download")}
     >
       <Download class="size-4" />
-    </a>
+    </button>
   {/if}
 </div>

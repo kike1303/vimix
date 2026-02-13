@@ -229,3 +229,27 @@ export async function fetchBatch(batchId: string): Promise<BatchWithJobs> {
 export function getResultUrl(jobId: string): string {
   return `${API_URL()}/jobs/${jobId}/result`;
 }
+
+/**
+ * Download a job result file programmatically.
+ * In Tauri's webview, <a href> navigates away instead of downloading,
+ * so we fetch as a blob and trigger a download via object URL.
+ */
+export async function downloadResult(jobId: string, filename: string): Promise<void> {
+  const url = getResultUrl(jobId);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Download failed");
+
+  const blob = await res.blob();
+  const objectUrl = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = objectUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+
+  // Cleanup
+  document.body.removeChild(a);
+  URL.revokeObjectURL(objectUrl);
+}
