@@ -54,10 +54,11 @@ jobs:
             runner: windows-latest
             triple: x86_64-pc-windows-msvc
             platform: windows
-          - label: Linux x64
-            runner: ubuntu-22.04
-            triple: x86_64-unknown-linux-gnu
-            platform: linux
+          # Linux build disabled — takes 1h+ on GitHub Actions
+          # - label: Linux x64
+          #   runner: ubuntu-22.04
+          #   triple: x86_64-unknown-linux-gnu
+          #   platform: linux
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -156,16 +157,18 @@ jobs:
             patchelf
 
       # --- Build + upload ---
-      # --- Build + upload ---
-      # Note: To enable macOS code signing, add APPLE_CERTIFICATE, APPLE_CERTIFICATE_PASSWORD,
-      # APPLE_SIGNING_IDENTITY, APPLE_ID, APPLE_PASSWORD, and APPLE_TEAM_ID as repository secrets.
-      # The tauri-action will pick them up automatically when present in the environment.
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           projectPath: apps/web
           releaseId: ${{ needs.create-release.outputs.release_id }}
