@@ -1,6 +1,25 @@
 # Vimix
 
-Local AI-powered media processing toolkit. Remove video backgrounds, convert formats, compress, trim, extract audio, and more — all running on your machine.
+Local AI-powered media processing toolkit. Remove video backgrounds, convert formats, compress, trim, extract audio, and more — all running on your machine. No cloud, no uploads, no API keys. Everything runs locally.
+
+<p align="center">
+  <img src="screenshot_1.png" alt="Vimix - Tool selection" width="700" />
+</p>
+
+<p align="center">
+  <img src="screenshot_2.png" alt="Vimix - Processor options" width="700" />
+</p>
+
+## Download
+
+Download the latest version for your platform:
+
+| Platform | Download |
+|----------|----------|
+| macOS (Apple Silicon) | [Vimix.dmg](https://github.com/kike1303/vimix/releases/latest/download/Vimix_aarch64.dmg) |
+| Windows (x64) | [Vimix.msi](https://github.com/kike1303/vimix/releases/latest/download/Vimix_x64-setup.msi) |
+
+Or browse all releases on the [Releases page](https://github.com/kike1303/vimix/releases).
 
 ## Features
 
