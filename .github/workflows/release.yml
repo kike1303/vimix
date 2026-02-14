@@ -155,11 +155,12 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASS" "$KEYCHAIN"
           security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
 
-          # Sign each resource binary
+          # Sign each resource binary with entitlements
           RESOURCES_DIR="apps/web/src-tauri/resources"
+          ENTITLEMENTS="apps/web/src-tauri/entitlements.plist"
           for bin in "$RESOURCES_DIR"/ffmpeg "$RESOURCES_DIR"/ffprobe "$RESOURCES_DIR"/img2webp; do
             echo "Signing $bin"
-            codesign --sign "$APPLE_SIGNING_IDENTITY" --force --timestamp --options runtime "$bin"
+            codesign --sign "$APPLE_SIGNING_IDENTITY" --force --timestamp --options runtime --entitlements "$ENTITLEMENTS" "$bin"
           done
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
