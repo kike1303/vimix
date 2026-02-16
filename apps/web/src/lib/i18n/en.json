@@ -27,7 +27,9 @@
     "back": "Back",
     "loading": "Starting up...",
     "loadingSub": "Preparing the processing engine",
-    "loadingFailed": "Could not start the processing engine. Please restart the app."
+    "loadingFailed": "Could not start the processing engine. Please restart the app.",
+    "favorites": "Favorites",
+    "categories": "Categories"
   },
   "upload": {
     "optionsLabel": "Options",

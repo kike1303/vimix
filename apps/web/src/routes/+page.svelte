@@ -25,6 +25,8 @@
   import CategoryGrid from "$lib/components/CategoryGrid.svelte";
   import ProcessorGrid from "$lib/components/ProcessorGrid.svelte";
   import FileUpload from "$lib/components/FileUpload.svelte";
+  import { favoriteIds } from "$lib/stores/favorites.svelte";
+  import Heart from "lucide-svelte/icons/heart";
 
   let processors = $state<Processor[]>([]);
   let selectedCategory = $state<string | null>(null);
@@ -43,6 +45,11 @@
     selectedCategory
       ? getProcessorsForCategory(processors, selectedCategory)
       : [],
+  );
+
+  // Derived: favorite processors
+  let favoriteProcessors = $derived(
+    processors.filter((p) => favoriteIds.includes(p.id)),
   );
 
   // Derived: processor counts per category
@@ -205,6 +212,23 @@
         <h1 class="text-2xl font-bold">{$_("home.title")}</h1>
         <p class="text-sm text-muted-foreground">{$_("home.subtitle")}</p>
       </div>
+
+      {#if favoriteProcessors.length > 0}
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <Heart class="size-4 text-red-500" fill="currentColor" />
+            <h2 class="text-sm font-semibold text-foreground">{$_("home.favorites")}</h2>
+          </div>
+          <ProcessorGrid
+            processors={favoriteProcessors}
+            onselect={(proc) => selectProcessor(proc)}
+          />
+        </div>
+
+        <hr class="border-border" />
+
+        <h2 class="text-sm font-semibold text-foreground">{$_("home.categories")}</h2>
+      {/if}
 
       <CategoryGrid {categories} {processorCounts} onselect={selectCategory} />
     {:else if selectedCategory && !selectedProcessor}

@@ -27,7 +27,9 @@
     "back": "Volver",
     "loading": "Iniciando...",
     "loadingSub": "Preparando el motor de procesamiento",
-    "loadingFailed": "No se pudo iniciar el motor de procesamiento. Reinicia la app."
+    "loadingFailed": "No se pudo iniciar el motor de procesamiento. Reinicia la app.",
+    "favorites": "Favoritos",
+    "categories": "Categorías"
   },
   "upload": {
     "optionsLabel": "Opciones",
