@@ -29,6 +29,15 @@ export function getProcessorsForCategory(
   );
 }
 
+export function getCategoryForProcessor(processorId: string): string | null {
+  for (const cat of categories) {
+    if (cat.prefixes.some((prefix) => processorId.startsWith(prefix) || processorId === prefix)) {
+      return cat.id;
+    }
+  }
+  return null;
+}
+
 export function getCategoryIcon(categoryId: string): ComponentType {
   const cat = categories.find((c) => c.id === categoryId);
   return cat?.icon ?? FileText;

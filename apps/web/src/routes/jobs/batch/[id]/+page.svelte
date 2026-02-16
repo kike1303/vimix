@@ -144,7 +144,7 @@
 
 <div class="flex flex-col gap-6">
   <div class="flex items-center gap-4">
-    <Button href="/" variant="outline" size="sm" class="gap-1.5">
+    <Button href={batch ? `/?processor=${batch.processor_id}` : "/"} variant="outline" size="sm" class="gap-1.5">
       <ArrowLeft class="size-4" />
       {$_("batch.backToHome")}
     </Button>

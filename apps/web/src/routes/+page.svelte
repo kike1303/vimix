@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import { page } from "$app/state";
   import { _ } from "svelte-i18n";
   import {
     fetchProcessors,
@@ -14,6 +15,7 @@
   import {
     categories,
     getProcessorsForCategory,
+    getCategoryForProcessor,
     getCategoryIcon,
   } from "$lib/processor-categories";
   import * as Alert from "$lib/components/ui/alert/index.js";
@@ -73,6 +75,19 @@
         if (!cancelled) {
           processors = p;
           error = "";
+
+          // Restore processor from query param (e.g. back from job page)
+          const qp = page.url.searchParams.get("processor");
+          if (qp) {
+            const proc = p.find((pr) => pr.id === qp);
+            if (proc) {
+              const cat = getCategoryForProcessor(proc.id);
+              if (cat) selectedCategory = cat;
+              selectProcessor(proc);
+            }
+            // Clean up the URL
+            goto("/", { replaceState: true });
+          }
         }
       } catch {
         if (cancelled) return;
