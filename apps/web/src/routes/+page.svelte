@@ -99,12 +99,16 @@
     error = "";
 
     try {
-      if (selectedFiles.length === 1) {
+      if (selectedFiles.length === 1 && !selectedProcessor.accepts_multiple_files) {
         const job = await createJob(selectedProcessor.id, selectedFiles[0], options);
         goto(`/jobs/${job.id}`);
       } else {
-        const batch = await createBatch(selectedProcessor.id, selectedFiles, options);
-        goto(`/jobs/batch/${batch.id}`);
+        const result = await createBatch(selectedProcessor.id, selectedFiles, options);
+        if (result.type === "job") {
+          goto(`/jobs/${result.id}`);
+        } else {
+          goto(`/jobs/batch/${result.id}`);
+        }
       }
     } catch (e) {
       error = e instanceof Error ? e.message : $_("upload.errorUpload");

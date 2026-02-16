@@ -121,14 +121,27 @@ Add `showWhen` to an option to only show it when another option has a specific v
 
 If you don't override `options_schema`, the processor will have no options (which is fine).
 
+### Optional: Multi-file support
+
+If your processor needs multiple files as input (e.g. PDF merge, image-to-PDF), override `accepts_multiple_files`:
+
+```python
+@property
+def accepts_multiple_files(self) -> bool:
+    return True
+```
+
+When `accepts_multiple_files` is `True`, the batch endpoint (`POST /jobs/batch`) creates a single job instead of N separate jobs. All uploaded files are passed via the `input_paths` parameter.
+
 ### Required method
 
-`process(input_path, output_dir, on_progress, options) -> Path`
+`process(input_path, output_dir, on_progress, options, input_paths) -> Path`
 
-- `input_path`: Path to the uploaded file.
+- `input_path`: Path to the uploaded file (first file for multi-file processors).
 - `output_dir`: Writable directory for intermediate files and the final output.
 - `on_progress`: Async callback — call `await on_progress(percent, message)` to report progress (0–100).
 - `options`: Dict of user-selected values matching your `options_schema`. Always provide defaults.
+- `input_paths`: List of all input file paths (only populated for multi-file processors). Use `input_paths or [input_path]` to handle both cases.
 - **Return**: Path to the final output file.
 
 ## 2. Register the processor

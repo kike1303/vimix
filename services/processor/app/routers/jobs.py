@@ -109,7 +109,25 @@ async def create_batch(
                 detail=f"File type {ext} not accepted for '{f.filename}'. Expected: {processor.accepted_extensions}",
             )
 
-    # Create jobs for each file
+    # Multi-file processor: create ONE job with all files
+    if processor.accepts_multiple_files:
+        filenames = [f.filename or "upload" for f in files]
+        combined_name = f"{len(files)}_files"
+        job = job_manager.create(processor_id, combined_name)
+        output_dir = get_job_dir(job.id)
+
+        input_paths: list[Path] = []
+        for f in files:
+            data = await f.read()
+            path = save_upload(job.id, f.filename or "upload", data)
+            input_paths.append(path)
+
+        asyncio.create_task(
+            _run_job(job.id, processor_id, input_paths[0], output_dir, parsed_options, input_paths)
+        )
+        return {"type": "job", **job.to_dict()}
+
+    # Standard processors: create N independent jobs
     job_ids: list[str] = []
     for f in files:
         data = await f.read()
@@ -120,7 +138,7 @@ async def create_batch(
         job_ids.append(job.id)
 
     batch = job_manager.create_batch(processor_id, job_ids)
-    return batch.to_dict()
+    return {"type": "batch", **batch.to_dict()}
 
 
 @router.get("/batch/{batch_id}")
@@ -195,6 +213,11 @@ _MEDIA_TYPES: dict[str, str] = {
     ".wav": "audio/wav",
     ".flac": "audio/flac",
     ".ogg": "audio/ogg",
+    ".pdf": "application/pdf",
+    ".txt": "text/plain",
+    ".json": "application/json",
+    ".m4a": "audio/mp4",
+    ".wma": "audio/x-ms-wma",
 }
 
 
@@ -217,7 +240,14 @@ async def download_result(job_id: str):
     )
 
 
-async def _run_job(job_id: str, processor_id: str, input_path, output_dir, options: dict | None = None):
+async def _run_job(
+    job_id: str,
+    processor_id: str,
+    input_path,
+    output_dir,
+    options: dict | None = None,
+    input_paths: list[Path] | None = None,
+):
     job = job_manager.get(job_id)
     if job is None:
         return
@@ -229,7 +259,9 @@ async def _run_job(job_id: str, processor_id: str, input_path, output_dir, optio
         await job_manager.update_progress(job_id, pct, msg)
 
     try:
-        result_path = await processor.process(input_path, output_dir, on_progress, options)
+        result_path = await processor.process(
+            input_path, output_dir, on_progress, options, input_paths
+        )
         job_manager.mark_completed(job_id, result_path)
         await job_manager.update_progress(job_id, 100, "Done!")
         # Notify completion

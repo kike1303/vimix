@@ -35,8 +35,20 @@ The **backend** runs the actual media processing (AI background removal, video/i
 │              │                       │  │  ├ vid-comp  │  │
 │              │                       │  │  ├ img-wm    │  │
 │              │                       │  │  ├ pdf-img   │  │
-└─────────────┘                       │  │  └ vid-thumb │  │
-                                       │  └─────────────┘  │
+│              │                       │  │  ├ vid-thumb │  │
+│              │                       │  │  ├ pdf-merge │  │
+│              │                       │  │  ├ pdf-split │  │
+│              │                       │  │  ├ pdf-comp  │  │
+│              │                       │  │  ├ pdf-rot   │  │
+│              │                       │  │  ├ pdf-prot  │  │
+│              │                       │  │  ├ pdf-unlk  │  │
+│              │                       │  │  ├ pdf-pgnum │  │
+│              │                       │  │  ├ pdf-wm    │  │
+│              │                       │  │  ├ pdf-text  │  │
+│              │                       │  │  ├ img-pdf   │  │
+│              │                       │  │  ├ aud-conv  │  │
+│              │                       │  │  └ aud-trim  │  │
+└─────────────┘                       │  └─────────────┘  │
                                        └──────────────────┘
 ```
 
@@ -107,6 +119,18 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `image-watermark` | Add text watermark to image | Pillow (ImageDraw + alpha composite) |
 | `pdf-to-image` | Convert PDF pages to images | PyMuPDF + Pillow |
 | `video-thumbnail` | Extract a frame from video as image | FFmpeg |
+| `pdf-merge` | Merge multiple PDFs into one (multi-file) | PyMuPDF |
+| `pdf-split` | Split PDF into pages or extract ranges | PyMuPDF |
+| `pdf-compress` | Compress PDF file size | PyMuPDF + Pillow |
+| `pdf-rotate` | Rotate PDF pages | PyMuPDF |
+| `pdf-protect` | Add password protection to PDF | PyMuPDF (AES-256) |
+| `pdf-unlock` | Remove password from PDF | PyMuPDF |
+| `pdf-page-numbers` | Add page numbers to PDF | PyMuPDF |
+| `pdf-watermark` | Add text watermark to PDF pages | PyMuPDF |
+| `pdf-extract-text` | Extract text from PDF as TXT/JSON | PyMuPDF |
+| `image-to-pdf` | Convert images to PDF (multi-file) | PyMuPDF + Pillow |
+| `audio-convert` | Convert audio format/bitrate/sample rate | FFmpeg |
+| `audio-trim` | Cut a segment from audio | FFmpeg |
 
 ### Key files
 
@@ -128,6 +152,18 @@ The frontend auto-renders UI controls from the processor's `options_schema`:
 | `app/processors/image_watermark.py` | Image watermark |
 | `app/processors/pdf_to_image.py` | PDF to image conversion |
 | `app/processors/video_thumbnail.py` | Video thumbnail extraction |
+| `app/processors/pdf_merge.py` | PDF merge (multi-file) |
+| `app/processors/pdf_split.py` | PDF split/extract pages |
+| `app/processors/pdf_compress.py` | PDF compression |
+| `app/processors/pdf_rotate.py` | PDF page rotation |
+| `app/processors/pdf_protect.py` | PDF password protection |
+| `app/processors/pdf_unlock.py` | PDF password removal |
+| `app/processors/pdf_page_numbers.py` | PDF page numbering |
+| `app/processors/pdf_watermark.py` | PDF text watermark |
+| `app/processors/pdf_extract_text.py` | PDF text extraction |
+| `app/processors/image_to_pdf.py` | Image to PDF (multi-file) |
+| `app/processors/audio_convert.py` | Audio format conversion |
+| `app/processors/audio_trim.py` | Audio trimming |
 | `app/processors/registry.py` | Processor registration and lookup |
 | `app/services/job_manager.py` | In-memory job state + SSE pub/sub |
 | `app/services/file_manager.py` | File upload storage |

@@ -93,6 +93,7 @@ class ImageBgRemoveProcessor(BaseProcessor):
         output_dir: Path,
         on_progress: ProgressCallback,
         options: dict[str, Any] | None = None,
+        input_paths: list[Path] | None = None,
     ) -> Path:
         opts = options or {}
         model_name: str = str(opts.get("model", "u2netp"))

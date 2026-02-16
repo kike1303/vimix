@@ -8,19 +8,19 @@ from app.processors.base import BaseProcessor, ProgressCallback
 from app.services.binary_paths import get_ffmpeg
 
 _FORMAT_CONFIG: dict[str, dict[str, Any]] = {
-    "mp3": {"ext": ".mp3", "codec": "libmp3lame", "default_bitrate": "192k"},
-    "aac": {"ext": ".aac", "codec": "aac", "default_bitrate": "192k"},
-    "wav": {"ext": ".wav", "codec": "pcm_s16le", "default_bitrate": None},
-    "flac": {"ext": ".flac", "codec": "flac", "default_bitrate": None},
-    "ogg": {"ext": ".ogg", "codec": "libvorbis", "default_bitrate": "192k"},
+    "mp3": {"ext": ".mp3", "codec": "libmp3lame"},
+    "wav": {"ext": ".wav", "codec": "pcm_s16le"},
+    "aac": {"ext": ".aac", "codec": "aac"},
+    "ogg": {"ext": ".ogg", "codec": "libvorbis"},
+    "flac": {"ext": ".flac", "codec": "flac"},
 }
 
 
-class AudioExtractProcessor(BaseProcessor):
-    id = "audio-extract"
-    label = "Extract Audio"
-    description = "Extract the audio track from a video as MP3, AAC, WAV, FLAC, or OGG."
-    accepted_extensions = [".mp4", ".mov", ".webm", ".avi", ".mkv"]
+class AudioConvertProcessor(BaseProcessor):
+    id = "audio-convert"
+    label = "Convert Audio"
+    description = "Convert audio files between formats with bitrate and sample rate control."
+    accepted_extensions = [".mp3", ".wav", ".aac", ".ogg", ".flac", ".m4a", ".wma"]
 
     @property
     def options_schema(self) -> list[dict]:
@@ -32,10 +32,10 @@ class AudioExtractProcessor(BaseProcessor):
                 "default": "mp3",
                 "choices": [
                     {"value": "mp3", "label": "MP3"},
-                    {"value": "aac", "label": "AAC"},
                     {"value": "wav", "label": "WAV"},
-                    {"value": "flac", "label": "FLAC"},
+                    {"value": "aac", "label": "AAC"},
                     {"value": "ogg", "label": "OGG"},
+                    {"value": "flac", "label": "FLAC"},
                 ],
             },
             {
@@ -48,9 +48,20 @@ class AudioExtractProcessor(BaseProcessor):
                     {"value": "256k", "label": "256 kbps"},
                     {"value": "192k", "label": "192 kbps"},
                     {"value": "128k", "label": "128 kbps"},
-                    {"value": "96k", "label": "96 kbps"},
+                    {"value": "64k", "label": "64 kbps"},
                 ],
                 "showWhen": {"format": ["mp3", "aac", "ogg"]},
+            },
+            {
+                "id": "sample_rate",
+                "label": "Sample rate",
+                "type": "select",
+                "default": "44100",
+                "choices": [
+                    {"value": "48000", "label": "48000 Hz"},
+                    {"value": "44100", "label": "44100 Hz"},
+                    {"value": "22050", "label": "22050 Hz"},
+                ],
             },
         ]
 
@@ -63,22 +74,24 @@ class AudioExtractProcessor(BaseProcessor):
         input_paths: list[Path] | None = None,
     ) -> Path:
         opts = options or {}
-        fmt: str = str(opts.get("format", "mp3"))
-        bitrate: str = str(opts.get("bitrate", "192k"))
+        fmt = str(opts.get("format", "mp3"))
+        bitrate = str(opts.get("bitrate", "192k"))
+        sample_rate = str(opts.get("sample_rate", "44100"))
 
         config = _FORMAT_CONFIG[fmt]
         output_file = output_dir / f"output{config['ext']}"
 
-        await on_progress(10, "Extracting audio...")
+        await on_progress(10, "Converting audio...")
 
         cmd = [
             get_ffmpeg(), "-hide_banner", "-loglevel", "error",
             "-i", str(input_path),
-            "-vn",
             "-c:a", config["codec"],
+            "-ar", sample_rate,
         ]
 
-        if config["default_bitrate"] is not None:
+        # Add bitrate for lossy formats
+        if fmt in ("mp3", "aac", "ogg"):
             cmd += ["-b:a", bitrate]
 
         cmd += ["-y", str(output_file)]
@@ -90,7 +103,7 @@ class AudioExtractProcessor(BaseProcessor):
         )
         _, stderr = await proc.communicate()
         if proc.returncode != 0:
-            raise RuntimeError(f"FFmpeg audio extract failed: {stderr.decode()}")
+            raise RuntimeError(f"FFmpeg audio convert failed: {stderr.decode()}")
 
         await on_progress(100, "Done!")
         return output_file
