@@ -66,6 +66,9 @@ importers:
       svelte-check:
         specifier: ^4.0.0
         version: 4.3.6(picomatch@4.0.3)(svelte@5.50.1)(typescript@5.9.3)
+      svelte-sonner:
+        specifier: ^1.0.7
+        version: 1.0.7(svelte@5.50.1)
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -1136,6 +1139,11 @@ packages:
     peerDependencies:
       svelte: ^5.7.0
 
+  runed@0.28.0:
+    resolution: {integrity: sha512-k2xx7RuO9hWcdd9f+8JoBeqWtYrm5CALfgpkg2YDB80ds/QE4w0qqu34A7fqiAwiBBSBQOid7TLxwxVC27ymWQ==}
+    peerDependencies:
+      svelte: ^5.7.0
+
   runed@0.35.1:
     resolution: {integrity: sha512-2F4Q/FZzbeJTFdIS/PuOoPRSm92sA2LhzTnv6FXhCoENb3huf5+fDuNOg1LNvGOouy3u/225qxmuJvcV3IZK5Q==}
     peerDependencies:
@@ -1200,6 +1208,11 @@ packages:
     hasBin: true
     peerDependencies:
       svelte: ^3 || ^4 || ^5
+
+  svelte-sonner@1.0.7:
+    resolution: {integrity: sha512-1EUFYmd7q/xfs2qCHwJzGPh9n5VJ3X6QjBN10fof2vxgy8fYE7kVfZ7uGnd7i6fQaWIr5KvXcwYXE/cmTEjk5A==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   svelte-toolbelt@0.10.6:
     resolution: {integrity: sha512-YWuX+RE+CnWYx09yseAe4ZVMM7e7GRFZM6OYWpBKOb++s+SQ8RBIMMe+Bs/CznBMc0QPLjr+vDBxTAkozXsFXQ==}
@@ -2200,6 +2213,11 @@ snapshots:
       esm-env: 1.2.2
       svelte: 5.50.1
 
+  runed@0.28.0(svelte@5.50.1):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.50.1
+
   runed@0.35.1(@sveltejs/kit@2.50.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.50.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.50.1)(typescript@5.9.3)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.50.1):
     dependencies:
       dequal: 2.0.3
@@ -2273,6 +2291,11 @@ snapshots:
       sade: 1.8.1
       svelte: 5.50.1
       tiny-glob: 0.2.9
+
+  svelte-sonner@1.0.7(svelte@5.50.1):
+    dependencies:
+      runed: 0.28.0(svelte@5.50.1)
+      svelte: 5.50.1
 
   svelte-toolbelt@0.10.6(@sveltejs/kit@2.50.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.50.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.50.1)(typescript@5.9.3)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.50.1):
     dependencies:

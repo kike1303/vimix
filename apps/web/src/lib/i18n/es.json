@@ -51,7 +51,10 @@
     "done": "Listo!",
     "notFound": "Trabajo no encontrado",
     "download": "Descargar",
-    "readyToDownload": "Listo para descargar"
+    "readyToDownload": "Listo para descargar",
+    "downloaded": "{filename} guardado",
+    "downloadedAll": "{count} archivos guardados",
+    "downloadFailed": "Error al descargar"
   },
   "processors": {
     "video-bg-remove": {

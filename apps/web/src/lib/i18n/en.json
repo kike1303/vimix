@@ -51,7 +51,10 @@
     "done": "Done!",
     "notFound": "Job not found",
     "download": "Download",
-    "readyToDownload": "Ready to download"
+    "readyToDownload": "Ready to download",
+    "downloaded": "{filename} saved",
+    "downloadedAll": "{count} files saved",
+    "downloadFailed": "Download failed"
   },
   "processors": {
     "video-bg-remove": {
