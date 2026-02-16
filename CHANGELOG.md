@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-15
+
+### Added
+
+- Favorite processors: mark any tool with a heart icon to save it as a favorite, persisted in localStorage
+- Favorites section on the home screen: favorited tools appear above categories for quick access, skipping category navigation
+- Visual separator and "Categories" subtitle to distinguish favorites from category grid
+
 ## [0.3.0] - 2026-02-15
 
 ### Added
