@@ -80,6 +80,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      # --- System deps for numba OpenMP threading ---
+      - name: Install libomp (macOS)
+        if: matrix.platform == 'macos'
+        run: brew install libomp
+
       - name: Create venv and install Python deps
         shell: bash
         run: |

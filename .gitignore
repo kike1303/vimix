@@ -17,6 +17,9 @@ venv/
 services/processor/uploads/
 services/processor/jobs/
 
+# MCP server log
+services/mcp/mcp.log
+
 # Tauri
 apps/web/src-tauri/target/
 apps/web/src-tauri/gen/

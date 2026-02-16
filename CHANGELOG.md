@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-02-15
+
+### Added
+
+- MCP server (`services/mcp/`) — exposes Vimix processing tools to LLM agents via the Model Context Protocol (Streamable HTTP on port 8788). Tools: `list_processors`, `process_file`, `batch_process`
+- Auto-registration: on app startup, Vimix automatically registers its MCP server in all detected AI agents (Claude Code, Cursor, Windsurf, Codex, Gemini CLI, Kiro, OpenCode, VS Code, Copilot CLI, Antigravity)
+
 ## [0.4.0] - 2026-02-15
 
 ### Added

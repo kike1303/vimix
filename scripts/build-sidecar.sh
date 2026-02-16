@@ -19,6 +19,14 @@ echo "==> Building sidecar for $HOST_TRIPLE"
 
 OS="$(uname -s)"
 
+# macOS: ensure libomp is installed (required by numba for threadsafe OpenMP)
+if [ "$OS" = "Darwin" ]; then
+  if ! brew list libomp &>/dev/null; then
+    echo "==> Installing libomp (required by numba)..."
+    brew install libomp
+  fi
+fi
+
 # Activate venv and run PyInstaller
 cd "$PROCESSOR_DIR"
 

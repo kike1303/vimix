@@ -36,6 +36,26 @@ for pkg in ["pymatting", "rembg", "scikit-image", "onnxruntime", "pillow",
     except Exception:
         pass
 
+# MCP registration module (bundled so sidecar can auto-register on startup)
+mcp_dir = os.path.join(spec_dir, "..", "mcp")
+mcp_datas = []
+if os.path.isfile(os.path.join(mcp_dir, "register.py")):
+    mcp_datas.append((os.path.join(mcp_dir, "register.py"), "mcp"))
+
+# Bundle libomp on macOS so the desktop app doesn't require homebrew.
+# On Windows the MSVC OpenMP runtime is picked up automatically by PyInstaller.
+# On Linux libgomp is typically system-provided and PyInstaller bundles it.
+libomp_binaries = []
+if sys.platform == "darwin":
+    for libomp_path in [
+        "/opt/homebrew/opt/libomp/lib/libomp.dylib",
+        "/opt/homebrew/lib/libomp.dylib",
+        "/usr/local/lib/libomp.dylib",
+    ]:
+        if os.path.isfile(libomp_path):
+            libomp_binaries.append((libomp_path, "."))
+            break
+
 # Include the small ONNX model (u2netp ~4.4 MB) for offline use
 # Larger models (u2net ~168 MB, isnet ~170 MB) can be downloaded on first use
 model_datas = []
@@ -46,8 +66,8 @@ if u2netp_path.exists():
 a = Analysis(
     ["app/main.py"],
     pathex=[spec_dir],
-    binaries=[],
-    datas=rembg_data + model_datas + pkg_metadata,
+    binaries=libomp_binaries,
+    datas=rembg_data + model_datas + mcp_datas + pkg_metadata,
     hiddenimports=[
         *rembg_hidden,
         *onnx_hidden,

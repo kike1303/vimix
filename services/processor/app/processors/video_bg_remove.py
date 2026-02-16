@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -13,10 +12,12 @@ from rembg import new_session, remove
 from app.processors.base import BaseProcessor, ProgressCallback
 from app.services.binary_paths import get_ffmpeg, get_img2webp
 
-# Reuse a single thread pool across jobs so threads (and their ONNX sessions)
-# stay warm between requests.
-_MAX_WORKERS = max(2, (os.cpu_count() or 4) // 2)
-_pool = ThreadPoolExecutor(max_workers=_MAX_WORKERS)
+# Single-thread pool: numba's workqueue threading layer is not threadsafe and
+# crashes when called from multiple Python threads. Routing all rembg/pymatting
+# calls through one thread avoids this. Performance is not affected because
+# ONNX Runtime manages its own internal thread pool for model inference (the
+# bottleneck), so Python-level parallelism adds no benefit here.
+_pool = ThreadPoolExecutor(max_workers=1)
 
 
 class VideoBgRemoveProcessor(BaseProcessor):
@@ -153,18 +154,16 @@ class VideoBgRemoveProcessor(BaseProcessor):
         # --- Step 3: Remove backgrounds in parallel ---
         total = len(frames)
         completed = 0
-        sem = asyncio.Semaphore(_MAX_WORKERS)
 
         async def process_frame(fp: Path) -> None:
             nonlocal completed
-            async with sem:
-                await loop.run_in_executor(
-                    _pool, _remove_bg_sync, fp, cut_dir / fp.name, session,
-                    refine_edges, fg_threshold, bg_threshold, erode_size,
-                )
-                completed += 1
-                pct = 15 + (completed / total) * 65
-                await on_progress(pct, f"Removing background – frame {completed}/{total}")
+            await loop.run_in_executor(
+                _pool, _remove_bg_sync, fp, cut_dir / fp.name, session,
+                refine_edges, fg_threshold, bg_threshold, erode_size,
+            )
+            completed += 1
+            pct = 15 + (completed / total) * 65
+            await on_progress(pct, f"Removing background – frame {completed}/{total}")
 
         await asyncio.gather(*(process_frame(fp) for fp in frames))
 

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "dev:api": "cd services/processor && uvicorn app.main:app --reload --port 8787",
-    "dev:all": "concurrently \"pnpm dev\" \"pnpm dev:api\"",
+    "dev:mcp": "cd services/mcp && ./venv/bin/python server.py",
+    "dev:all": "concurrently \"pnpm dev\" \"pnpm dev:api\" \"pnpm dev:mcp\"",
     "build": "pnpm --filter web build",
     "preview": "pnpm --filter web preview",
     "tauri:dev": "pnpm --filter web tauri dev",

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
@@ -11,8 +10,11 @@ from rembg import new_session, remove
 
 from app.processors.base import BaseProcessor, ProgressCallback
 
-_MAX_WORKERS = max(2, (os.cpu_count() or 4) // 2)
-_pool = ThreadPoolExecutor(max_workers=_MAX_WORKERS)
+# Single-thread pool: numba's workqueue threading layer is not threadsafe and
+# crashes when called from multiple Python threads. Routing all rembg/pymatting
+# calls through one thread avoids this. Performance is not affected because
+# ONNX Runtime manages its own internal thread pool for model inference.
+_pool = ThreadPoolExecutor(max_workers=1)
 
 
 class ImageBgRemoveProcessor(BaseProcessor):

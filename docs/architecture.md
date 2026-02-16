@@ -8,6 +8,7 @@ Vimix is a monorepo with two main components:
 vimix/
 ├── apps/web/              ← SvelteKit 5 frontend (UI)
 ├── services/processor/    ← Python FastAPI backend (processing)
+├── services/mcp/          ← MCP server (AI agent integration)
 └── docs/                  ← Documentation
 ```
 
@@ -179,3 +180,54 @@ jobs/{job_id}/
 ```
 
 Both `uploads/` and `jobs/` are inside `services/processor/` and are git-ignored.
+
+## MCP Server – `services/mcp/`
+
+The MCP (Model Context Protocol) server allows AI agents to use Vimix tools directly from a conversation. It runs as a Streamable HTTP server on port 8788 and acts as an HTTP client to the FastAPI backend.
+
+### How it works
+
+```
+┌──────────────┐     MCP (HTTP)      ┌──────────────┐     HTTP      ┌──────────────┐
+│  AI Agent    │ ◄──────────────────► │  MCP Server  │ ────────────► │  FastAPI     │
+│  (Claude,    │   list_processors    │  :8788       │  POST /jobs   │  :8787       │
+│   Cursor,    │   process_file       │              │  GET /jobs/   │              │
+│   Codex...)  │   batch_process      │              │  GET /result  │              │
+└──────────────┘                      └──────────────┘               └──────────────┘
+```
+
+### Tools exposed
+
+| Tool | Description |
+|------|-------------|
+| `list_processors` | Discover all available processors with their options |
+| `process_file` | Process a single file (upload → poll → download result) |
+| `batch_process` | Process multiple files in one batch operation |
+
+### Auto-registration
+
+On startup, the MCP server automatically registers itself in all detected AI agent configurations:
+- Claude Code (`~/.claude.json`)
+- Cursor (`~/.cursor/mcp.json`)
+- Windsurf (`~/.codeium/windsurf/mcp_config.json`)
+- OpenCode (`~/.config/opencode/opencode.json`)
+- Gemini CLI (`~/.gemini/settings.json`)
+- Kiro (`~/.kiro/settings/mcp.json`)
+- Copilot CLI (`~/.copilot/mcp-config.json`)
+- Antigravity (`~/.gemini/antigravity/mcp_config.json`)
+- VS Code (platform-specific path)
+- Codex CLI (`~/.codex/config.toml`)
+
+New agents can be added by appending an `AgentProvider` entry to the `PROVIDERS` list in `register.py`.
+
+### Privacy
+
+All processing happens 100% locally. The MCP server reads files from disk, sends them to the local backend, and saves results back to disk. The AI agent only sees text metadata (file paths, sizes, processor names) — never the file contents.
+
+### Key files
+
+| File | Purpose |
+|------|---------|
+| `server.py` | MCP server with 3 tools (Streamable HTTP transport) |
+| `register.py` | Auto-registration in AI agent configs |
+| `requirements.txt` | Python dependencies (mcp, httpx) |
