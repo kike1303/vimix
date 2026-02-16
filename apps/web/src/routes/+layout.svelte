@@ -7,6 +7,7 @@
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import LangToggle from "$lib/components/LangToggle.svelte";
   import UpdateNotifier from "$lib/components/UpdateNotifier.svelte";
+  import { Toaster } from "$lib/components/ui/sonner/index.js";
 
   let { children } = $props();
 </script>
@@ -46,5 +47,6 @@
   </div>
 
   <UpdateNotifier />
+  <Toaster />
 {/if}
 </Tooltip.Provider>

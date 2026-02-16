@@ -3,6 +3,24 @@
     "name": "Vimix",
     "tagline": "Media processing toolkit"
   },
+  "categories": {
+    "video": {
+      "label": "Video",
+      "description": "Convert, trim, compress, and edit videos"
+    },
+    "image": {
+      "label": "Image",
+      "description": "Convert, compress, and edit images"
+    },
+    "pdf": {
+      "label": "PDF",
+      "description": "Merge, split, compress, protect, and edit PDFs"
+    },
+    "audio": {
+      "label": "Audio",
+      "description": "Convert, trim, and extract audio"
+    }
+  },
   "home": {
     "title": "What do you want to do?",
     "subtitle": "Choose a tool to get started.",
@@ -19,10 +37,14 @@
     "submit": "Start Processing",
     "submitBatch": "Process {count} files",
     "removeFile": "Remove file",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "reorderHint": "Drag or use arrows to reorder",
     "fileCount": "{count} files selected",
     "submitting": "Uploading...",
     "errorConnect": "Could not connect to the API. Is the processor service running?",
-    "errorUpload": "Upload failed"
+    "errorUpload": "Upload failed",
+    "toolCount": "{count} tools"
   },
   "job": {
     "title": "Processing",
@@ -32,7 +54,10 @@
     "done": "Done!",
     "notFound": "Job not found",
     "download": "Download",
-    "readyToDownload": "Ready to download"
+    "readyToDownload": "Ready to download",
+    "downloaded": "{filename} saved",
+    "downloadedAll": "{count} files saved",
+    "downloadFailed": "Download failed"
   },
   "processors": {
     "video-bg-remove": {
@@ -82,6 +107,54 @@
     "video-thumbnail": {
       "label": "Video Thumbnail",
       "description": "Extract a single frame from a video at a specific time as a PNG, JPG, or WebP image."
+    },
+    "pdf-merge": {
+      "label": "Merge PDFs",
+      "description": "Combine multiple PDF files into a single document."
+    },
+    "pdf-split": {
+      "label": "Split PDF",
+      "description": "Extract specific pages or split a PDF into separate files."
+    },
+    "pdf-compress": {
+      "label": "Compress PDF",
+      "description": "Reduce PDF file size by compressing content and images."
+    },
+    "pdf-rotate": {
+      "label": "Rotate PDF",
+      "description": "Rotate all or specific pages of a PDF by 90, 180, or 270 degrees."
+    },
+    "pdf-protect": {
+      "label": "Protect PDF",
+      "description": "Add password protection and permission restrictions to a PDF."
+    },
+    "pdf-unlock": {
+      "label": "Unlock PDF",
+      "description": "Remove password protection from a PDF file."
+    },
+    "pdf-page-numbers": {
+      "label": "Add Page Numbers",
+      "description": "Add page numbers to every page of a PDF document."
+    },
+    "pdf-watermark": {
+      "label": "PDF Watermark",
+      "description": "Add a text watermark to every page of a PDF document."
+    },
+    "pdf-extract-text": {
+      "label": "Extract Text from PDF",
+      "description": "Extract all text content from a PDF as plain text or JSON."
+    },
+    "image-to-pdf": {
+      "label": "Image to PDF",
+      "description": "Convert one or more images into a single PDF document."
+    },
+    "audio-convert": {
+      "label": "Convert Audio",
+      "description": "Convert audio files between formats with bitrate and sample rate control."
+    },
+    "audio-trim": {
+      "label": "Trim Audio",
+      "description": "Cut a segment from an audio file by selecting start time and duration."
     }
   },
   "options": {
@@ -150,11 +223,11 @@
     },
     "text": {
       "label": "Watermark text",
-      "description": "The text to display as a watermark on the image."
+      "description": "The text to display as a watermark."
     },
     "position": {
       "label": "Position",
-      "description": "Where to place the watermark on the image."
+      "description": "Where to place the watermark."
     },
     "size": {
       "label": "Font size",
@@ -174,11 +247,55 @@
     },
     "pages": {
       "label": "Pages",
-      "description": "Convert all pages or only the first page."
+      "description": "Which pages to process."
     },
     "time": {
       "label": "Time (seconds)",
       "description": "The exact second in the video to capture as a thumbnail."
+    },
+    "mode": {
+      "label": "Mode",
+      "description": "How to split the PDF."
+    },
+    "range": {
+      "label": "Page range",
+      "description": "Specify pages like 1-3,5,7-9."
+    },
+    "angle": {
+      "label": "Angle",
+      "description": "Rotation angle in degrees."
+    },
+    "password": {
+      "label": "Password",
+      "description": "Password to protect or unlock the PDF."
+    },
+    "permissions": {
+      "label": "Permissions",
+      "description": "What actions are allowed on the protected PDF."
+    },
+    "start_number": {
+      "label": "Start number",
+      "description": "The number to start counting from."
+    },
+    "font_size": {
+      "label": "Font size",
+      "description": "Size of the text in points."
+    },
+    "page_size": {
+      "label": "Page size",
+      "description": "The paper size for the output PDF."
+    },
+    "orientation": {
+      "label": "Orientation",
+      "description": "Portrait or landscape page orientation."
+    },
+    "margin": {
+      "label": "Margin (mm)",
+      "description": "Space around the image on each page in millimeters."
+    },
+    "sample_rate": {
+      "label": "Sample rate",
+      "description": "Audio sample rate in Hz. Higher values preserve more detail."
     },
     "original": "Original",
     "custom": "Custom",

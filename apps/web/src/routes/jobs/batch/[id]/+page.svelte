@@ -6,10 +6,12 @@
     fetchJob,
     subscribeProgress,
     getResultUrl,
+    downloadResult,
     type BatchWithJobs,
     type Job,
     type ProgressEvent,
   } from "$lib/api";
+  import { toast } from "svelte-sonner";
   import { Button } from "$lib/components/ui/button/index.js";
   import * as Alert from "$lib/components/ui/alert/index.js";
   import { Progress } from "$lib/components/ui/progress/index.js";
@@ -119,18 +121,20 @@
     };
   });
 
-  function downloadAll() {
+  async function downloadAll() {
     const completed = jobList.filter((j) => j.status === "completed");
-    completed.forEach((j, i) => {
-      setTimeout(() => {
-        const a = document.createElement("a");
-        a.href = getResultUrl(j.job.id);
-        a.download = "";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }, i * 500);
-    });
+    for (const j of completed) {
+      const stem = j.job.original_filename.includes(".")
+        ? j.job.original_filename.replace(/\.[^.]+$/, "")
+        : j.job.original_filename;
+      const filename = j.job.result_extension ? `${stem}${j.job.result_extension}` : stem;
+      try {
+        await downloadResult(j.job.id, filename);
+      } catch {
+        // individual failures handled silently
+      }
+    }
+    toast.success($_("job.downloadedAll", { values: { count: completed.length } }));
   }
 </script>
 
@@ -140,7 +144,7 @@
 
 <div class="flex flex-col gap-6">
   <div class="flex items-center gap-4">
-    <Button href="/" variant="outline" size="sm" class="gap-1.5">
+    <Button href={batch ? `/?processor=${batch.processor_id}` : "/"} variant="outline" size="sm" class="gap-1.5">
       <ArrowLeft class="size-4" />
       {$_("batch.backToHome")}
     </Button>

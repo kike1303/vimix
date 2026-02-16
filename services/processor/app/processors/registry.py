@@ -11,6 +11,18 @@ from app.processors.video_compress import VideoCompressProcessor
 from app.processors.image_watermark import ImageWatermarkProcessor
 from app.processors.pdf_to_image import PdfToImageProcessor
 from app.processors.video_thumbnail import VideoThumbnailProcessor
+from app.processors.pdf_merge import PdfMergeProcessor
+from app.processors.pdf_split import PdfSplitProcessor
+from app.processors.pdf_compress import PdfCompressProcessor
+from app.processors.pdf_rotate import PdfRotateProcessor
+from app.processors.pdf_protect import PdfProtectProcessor
+from app.processors.pdf_unlock import PdfUnlockProcessor
+from app.processors.pdf_page_numbers import PdfPageNumbersProcessor
+from app.processors.pdf_watermark import PdfWatermarkProcessor
+from app.processors.pdf_extract_text import PdfExtractTextProcessor
+from app.processors.image_to_pdf import ImageToPdfProcessor
+from app.processors.audio_convert import AudioConvertProcessor
+from app.processors.audio_trim import AudioTrimProcessor
 
 _PROCESSORS: dict[str, BaseProcessor] = {}
 
@@ -32,6 +44,18 @@ _register(VideoCompressProcessor())
 _register(ImageWatermarkProcessor())
 _register(PdfToImageProcessor())
 _register(VideoThumbnailProcessor())
+_register(PdfMergeProcessor())
+_register(PdfSplitProcessor())
+_register(PdfCompressProcessor())
+_register(PdfRotateProcessor())
+_register(PdfProtectProcessor())
+_register(PdfUnlockProcessor())
+_register(PdfPageNumbersProcessor())
+_register(PdfWatermarkProcessor())
+_register(PdfExtractTextProcessor())
+_register(ImageToPdfProcessor())
+_register(AudioConvertProcessor())
+_register(AudioTrimProcessor())
 
 
 def get_processor(processor_id: str) -> BaseProcessor:
@@ -49,6 +73,7 @@ def list_processors() -> list[dict]:
             "description": p.description,
             "accepted_extensions": p.accepted_extensions,
             "options_schema": p.options_schema,
+            "accepts_multiple_files": p.accepts_multiple_files,
         }
         for p in _PROCESSORS.values()
     ]

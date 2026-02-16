@@ -115,6 +115,7 @@ export interface Processor {
   description: string;
   accepted_extensions: string[];
   options_schema: OptionSchema[];
+  accepts_multiple_files: boolean;
 }
 
 export interface Job {
@@ -204,7 +205,7 @@ export async function createBatch(
   processorId: string,
   files: File[],
   options: Record<string, unknown> = {},
-): Promise<Batch> {
+): Promise<{ type: "job"; id: string } | { type: "batch"; id: string; job_ids: string[] }> {
   const form = new FormData();
   form.append("processor_id", processorId);
   for (const file of files) {

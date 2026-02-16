@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getResultUrl, downloadResult } from "$lib/api";
   import { _ } from "svelte-i18n";
+  import { toast } from "svelte-sonner";
   import { Button } from "$lib/components/ui/button/index.js";
   import Download from "lucide-svelte/icons/download";
   import FileArchive from "lucide-svelte/icons/file-archive";
@@ -70,7 +71,14 @@
     </div>
   {/if}
 
-  <Button size="lg" class="gap-2" onclick={() => downloadResult(jobId, downloadName)}>
+  <Button size="lg" class="gap-2" onclick={async () => {
+    try {
+      await downloadResult(jobId, downloadName);
+      toast.success($_("job.downloaded", { values: { filename: downloadName } }));
+    } catch {
+      toast.error($_("job.downloadFailed"));
+    }
+  }}>
     <Download class="size-4" />
     {$_("job.download")} {downloadName}
   </Button>

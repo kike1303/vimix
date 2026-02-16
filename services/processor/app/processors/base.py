@@ -31,6 +31,11 @@ class BaseProcessor(ABC):
         """File extensions this processor accepts (e.g. ['.mp4', '.mov'])."""
 
     @property
+    def accepts_multiple_files(self) -> bool:
+        """Whether this processor accepts multiple files as input."""
+        return False
+
+    @property
     def options_schema(self) -> list[dict]:
         """Declare configurable options for this processor.
 
@@ -55,14 +60,16 @@ class BaseProcessor(ABC):
         output_dir: Path,
         on_progress: ProgressCallback,
         options: dict[str, Any] | None = None,
+        input_paths: list[Path] | None = None,
     ) -> Path:
         """Run the processing pipeline.
 
         Args:
-            input_path: Path to the uploaded file.
+            input_path: Path to the uploaded file (first file for multi-file processors).
             output_dir: Temporary directory for intermediate and output files.
             on_progress: Callback to report progress (0-100) and a message.
             options: User-supplied options matching this processor's options_schema.
+            input_paths: All input file paths (for multi-file processors).
 
         Returns:
             Path to the final output file.

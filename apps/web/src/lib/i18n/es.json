@@ -3,6 +3,24 @@
     "name": "Vimix",
     "tagline": "Herramientas de procesamiento de medios"
   },
+  "categories": {
+    "video": {
+      "label": "Video",
+      "description": "Convierte, recorta, comprime y edita videos"
+    },
+    "image": {
+      "label": "Imagen",
+      "description": "Convierte, comprime y edita imagenes"
+    },
+    "pdf": {
+      "label": "PDF",
+      "description": "Une, divide, comprime, protege y edita PDFs"
+    },
+    "audio": {
+      "label": "Audio",
+      "description": "Convierte, recorta y extrae audio"
+    }
+  },
   "home": {
     "title": "Que quieres hacer?",
     "subtitle": "Elige una herramienta para comenzar.",
@@ -19,10 +37,14 @@
     "submit": "Iniciar procesamiento",
     "submitBatch": "Procesar {count} archivos",
     "removeFile": "Eliminar archivo",
+    "moveUp": "Subir",
+    "moveDown": "Bajar",
+    "reorderHint": "Arrastra o usa las flechas para reordenar",
     "fileCount": "{count} archivos seleccionados",
     "submitting": "Subiendo...",
     "errorConnect": "No se pudo conectar a la API. Esta corriendo el servicio?",
-    "errorUpload": "Error al subir el archivo"
+    "errorUpload": "Error al subir el archivo",
+    "toolCount": "{count} herramientas"
   },
   "job": {
     "title": "Procesando",
@@ -32,7 +54,10 @@
     "done": "Listo!",
     "notFound": "Trabajo no encontrado",
     "download": "Descargar",
-    "readyToDownload": "Listo para descargar"
+    "readyToDownload": "Listo para descargar",
+    "downloaded": "{filename} guardado",
+    "downloadedAll": "{count} archivos guardados",
+    "downloadFailed": "Error al descargar"
   },
   "processors": {
     "video-bg-remove": {
@@ -82,6 +107,54 @@
     "video-thumbnail": {
       "label": "Miniatura de video",
       "description": "Extrae un frame de un video en un momento especifico como imagen PNG, JPG o WebP."
+    },
+    "pdf-merge": {
+      "label": "Unir PDFs",
+      "description": "Combina multiples archivos PDF en un solo documento."
+    },
+    "pdf-split": {
+      "label": "Dividir PDF",
+      "description": "Extrae paginas especificas o divide un PDF en archivos separados."
+    },
+    "pdf-compress": {
+      "label": "Comprimir PDF",
+      "description": "Reduce el tamaño de un PDF comprimiendo contenido e imagenes."
+    },
+    "pdf-rotate": {
+      "label": "Rotar PDF",
+      "description": "Rota todas o algunas paginas de un PDF en 90, 180 o 270 grados."
+    },
+    "pdf-protect": {
+      "label": "Proteger PDF",
+      "description": "Agrega proteccion con contraseña y restricciones de permisos a un PDF."
+    },
+    "pdf-unlock": {
+      "label": "Desbloquear PDF",
+      "description": "Elimina la proteccion con contraseña de un archivo PDF."
+    },
+    "pdf-page-numbers": {
+      "label": "Numerar paginas",
+      "description": "Agrega numeros de pagina a cada pagina de un documento PDF."
+    },
+    "pdf-watermark": {
+      "label": "Marca de agua PDF",
+      "description": "Agrega una marca de agua de texto a cada pagina de un documento PDF."
+    },
+    "pdf-extract-text": {
+      "label": "Extraer texto de PDF",
+      "description": "Extrae todo el texto de un PDF como texto plano o JSON."
+    },
+    "image-to-pdf": {
+      "label": "Imagen a PDF",
+      "description": "Convierte una o mas imagenes en un solo documento PDF."
+    },
+    "audio-convert": {
+      "label": "Convertir audio",
+      "description": "Convierte archivos de audio entre formatos con control de bitrate y frecuencia de muestreo."
+    },
+    "audio-trim": {
+      "label": "Recortar audio",
+      "description": "Corta un segmento de un archivo de audio seleccionando tiempo de inicio y duracion."
     }
   },
   "options": {
@@ -150,11 +223,11 @@
     },
     "text": {
       "label": "Texto de marca de agua",
-      "description": "El texto que se muestra como marca de agua en la imagen."
+      "description": "El texto que se muestra como marca de agua."
     },
     "position": {
       "label": "Posicion",
-      "description": "Donde colocar la marca de agua en la imagen."
+      "description": "Donde colocar la marca de agua."
     },
     "size": {
       "label": "Tamaño de fuente",
@@ -174,11 +247,55 @@
     },
     "pages": {
       "label": "Paginas",
-      "description": "Convertir todas las paginas o solo la primera."
+      "description": "Que paginas procesar."
     },
     "time": {
       "label": "Tiempo (segundos)",
       "description": "El segundo exacto del video para capturar como miniatura."
+    },
+    "mode": {
+      "label": "Modo",
+      "description": "Como dividir el PDF."
+    },
+    "range": {
+      "label": "Rango de paginas",
+      "description": "Especifica paginas como 1-3,5,7-9."
+    },
+    "angle": {
+      "label": "Angulo",
+      "description": "Angulo de rotacion en grados."
+    },
+    "password": {
+      "label": "Contraseña",
+      "description": "Contraseña para proteger o desbloquear el PDF."
+    },
+    "permissions": {
+      "label": "Permisos",
+      "description": "Que acciones se permiten en el PDF protegido."
+    },
+    "start_number": {
+      "label": "Numero inicial",
+      "description": "El numero desde el cual empezar a contar."
+    },
+    "font_size": {
+      "label": "Tamaño de fuente",
+      "description": "Tamaño del texto en puntos."
+    },
+    "page_size": {
+      "label": "Tamaño de pagina",
+      "description": "El tamaño de papel para el PDF de salida."
+    },
+    "orientation": {
+      "label": "Orientacion",
+      "description": "Orientacion de pagina vertical u horizontal."
+    },
+    "margin": {
+      "label": "Margen (mm)",
+      "description": "Espacio alrededor de la imagen en cada pagina en milimetros."
+    },
+    "sample_rate": {
+      "label": "Frecuencia de muestreo",
+      "description": "Frecuencia de muestreo del audio en Hz. Valores mas altos preservan mas detalle."
     },
     "original": "Original",
     "custom": "Personalizado",

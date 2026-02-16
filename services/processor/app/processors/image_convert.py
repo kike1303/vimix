@@ -64,6 +64,7 @@ class ImageConvertProcessor(BaseProcessor):
         output_dir: Path,
         on_progress: ProgressCallback,
         options: dict[str, Any] | None = None,
+        input_paths: list[Path] | None = None,
     ) -> Path:
         opts = options or {}
         out_format: str = str(opts.get("format", "png"))

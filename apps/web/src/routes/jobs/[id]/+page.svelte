@@ -67,7 +67,7 @@
 
 <div class="flex flex-col gap-8">
   <div class="flex items-center gap-4">
-    <Button href="/" variant="outline" size="sm" class="gap-1.5">
+    <Button href={job ? `/?processor=${job.processor_id}` : "/"} variant="outline" size="sm" class="gap-1.5">
       <ArrowLeft class="size-4" />
       {$_("job.newJob")}
     </Button>

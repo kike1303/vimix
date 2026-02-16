@@ -82,6 +82,7 @@ class ImageCompressProcessor(BaseProcessor):
         output_dir: Path,
         on_progress: ProgressCallback,
         options: dict[str, Any] | None = None,
+        input_paths: list[Path] | None = None,
     ) -> Path:
         opts = options or {}
         quality: int = int(opts.get("quality", 75))

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { _ } from "svelte-i18n";
+  import { toast } from "svelte-sonner";
   import { getResultUrl, downloadResult } from "$lib/api";
   import { Progress } from "$lib/components/ui/progress/index.js";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
@@ -59,7 +60,14 @@
   {#if status === "completed"}
     <button
       type="button"
-      onclick={() => downloadResult(jobId, downloadName)}
+      onclick={async () => {
+        try {
+          await downloadResult(jobId, downloadName);
+          toast.success($_("job.downloaded", { values: { filename: downloadName } }));
+        } catch {
+          toast.error($_("job.downloadFailed"));
+        }
+      }}
       class="shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition"
       aria-label={$_("job.download")}
     >

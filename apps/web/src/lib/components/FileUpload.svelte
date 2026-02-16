@@ -4,6 +4,9 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import Upload from "lucide-svelte/icons/upload";
   import X from "lucide-svelte/icons/x";
+  import ArrowUp from "lucide-svelte/icons/arrow-up";
+  import ArrowDown from "lucide-svelte/icons/arrow-down";
+  import GripVertical from "lucide-svelte/icons/grip-vertical";
   import ProcessorOptions from "./ProcessorOptions.svelte";
 
   let {
@@ -68,6 +71,55 @@
 
   function removeFile(index: number) {
     selectedFiles = selectedFiles.filter((_, i) => i !== index);
+  }
+
+  function moveFile(from: number, to: number) {
+    if (to < 0 || to >= selectedFiles.length) return;
+    const updated = [...selectedFiles];
+    const [item] = updated.splice(from, 1);
+    updated.splice(to, 0, item);
+    selectedFiles = updated;
+  }
+
+  let reorderable = $derived(
+    processor.accepts_multiple_files && selectedFiles.length > 1,
+  );
+
+  // Drag-and-drop reorder state
+  let dragFromIndex = $state<number | null>(null);
+  let dragOverIndex = $state<number | null>(null);
+
+  function handleRowDragStart(e: DragEvent, index: number) {
+    dragFromIndex = index;
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(index));
+    }
+  }
+
+  function handleRowDragOver(e: DragEvent, index: number) {
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    if (dragFromIndex !== null && dragFromIndex !== index) {
+      dragOverIndex = index;
+    }
+  }
+
+  function handleRowDrop(e: DragEvent, index: number) {
+    e.preventDefault();
+    if (dragFromIndex !== null && dragFromIndex !== index) {
+      const updated = [...selectedFiles];
+      const [item] = updated.splice(dragFromIndex, 1);
+      updated.splice(index, 0, item);
+      selectedFiles = updated;
+    }
+    dragFromIndex = null;
+    dragOverIndex = null;
+  }
+
+  function handleRowDragEnd() {
+    dragFromIndex = null;
+    dragOverIndex = null;
   }
 
   function handleDrop(e: DragEvent) {
@@ -152,14 +204,61 @@
   {#if selectedFiles.length > 0}
     <div class="flex flex-col gap-2">
       {#if selectedFiles.length > 1}
-        <p class="text-xs text-muted-foreground">
-          {$_("upload.fileCount", { values: { count: selectedFiles.length } })}
-        </p>
+        <div class="flex items-center justify-between">
+          <p class="text-xs text-muted-foreground">
+            {$_("upload.fileCount", { values: { count: selectedFiles.length } })}
+          </p>
+          {#if reorderable}
+            <p class="text-xs text-muted-foreground">
+              {$_("upload.reorderHint")}
+            </p>
+          {/if}
+        </div>
       {/if}
-      {#each selectedFiles as file, i}
-        <div class="flex items-center gap-3 rounded-lg border border-border bg-card px-3 py-2">
+      {#each selectedFiles as file, i (reorderable ? `${i}-${file.name}` : `${file.name}:${file.size}`)}
+        <div
+          class="flex items-center gap-2 rounded-lg border bg-card px-3 py-2 transition-colors
+            {reorderable ? 'cursor-grab active:cursor-grabbing' : ''}
+            {dragFromIndex === i ? 'opacity-40' : ''}
+            {dragOverIndex === i ? 'border-primary bg-primary/5' : 'border-border'}"
+          draggable={reorderable && !disabled}
+          ondragstart={(e) => handleRowDragStart(e, i)}
+          ondragover={(e) => handleRowDragOver(e, i)}
+          ondrop={(e) => handleRowDrop(e, i)}
+          ondragend={handleRowDragEnd}
+          ondragleave={() => { if (dragOverIndex === i) dragOverIndex = null; }}
+          role={reorderable ? "listitem" : undefined}
+        >
+          {#if reorderable}
+            <GripVertical class="size-4 shrink-0 text-muted-foreground/50" />
+            <div class="flex shrink-0 flex-col gap-0.5">
+              <button
+                type="button"
+                class="rounded p-0.5 text-muted-foreground transition hover:bg-accent hover:text-foreground disabled:opacity-30"
+                onclick={(e) => { e.stopPropagation(); moveFile(i, i - 1); }}
+                disabled={disabled || i === 0}
+                aria-label={$_("upload.moveUp")}
+              >
+                <ArrowUp class="size-3" />
+              </button>
+              <button
+                type="button"
+                class="rounded p-0.5 text-muted-foreground transition hover:bg-accent hover:text-foreground disabled:opacity-30"
+                onclick={(e) => { e.stopPropagation(); moveFile(i, i + 1); }}
+                disabled={disabled || i === selectedFiles.length - 1}
+                aria-label={$_("upload.moveDown")}
+              >
+                <ArrowDown class="size-3" />
+              </button>
+            </div>
+          {/if}
           <div class="flex-1 min-w-0">
-            <p class="truncate text-sm font-medium">{file.name}</p>
+            <p class="truncate text-sm font-medium">
+              {#if reorderable}
+                <span class="text-muted-foreground">{i + 1}.</span>
+              {/if}
+              {file.name}
+            </p>
             <p class="text-xs text-muted-foreground">{formatSize(file.size)}</p>
           </div>
           <button
