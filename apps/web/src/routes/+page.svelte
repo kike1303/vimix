@@ -11,14 +11,21 @@
     type Processor,
   } from "$lib/api";
   import { getProcessorIcon } from "$lib/processor-icons";
+  import {
+    categories,
+    getProcessorsForCategory,
+    getCategoryIcon,
+  } from "$lib/processor-categories";
   import * as Alert from "$lib/components/ui/alert/index.js";
   import { Button } from "$lib/components/ui/button/index.js";
   import ArrowLeft from "lucide-svelte/icons/arrow-left";
   import Loader from "lucide-svelte/icons/loader";
+  import CategoryGrid from "$lib/components/CategoryGrid.svelte";
   import ProcessorGrid from "$lib/components/ProcessorGrid.svelte";
   import FileUpload from "$lib/components/FileUpload.svelte";
 
   let processors = $state<Processor[]>([]);
+  let selectedCategory = $state<string | null>(null);
   let selectedProcessor = $state<Processor | null>(null);
   let selectedFiles = $state<File[]>([]);
   let options = $state<Record<string, unknown>>({});
@@ -28,6 +35,23 @@
   // Loading state for desktop app startup
   let booting = $state(isTauri());
   let bootFailed = $state(false);
+
+  // Derived: processors filtered by selected category
+  let filteredProcessors = $derived(
+    selectedCategory
+      ? getProcessorsForCategory(processors, selectedCategory)
+      : [],
+  );
+
+  // Derived: processor counts per category
+  let processorCounts = $derived(
+    Object.fromEntries(
+      categories.map((cat) => [
+        cat.id,
+        getProcessorsForCategory(processors, cat.id).length,
+      ]),
+    ),
+  );
 
   $effect(() => {
     let cancelled = false;
@@ -68,6 +92,11 @@
     };
   });
 
+  function selectCategory(categoryId: string) {
+    selectedCategory = categoryId;
+    error = "";
+  }
+
   function selectProcessor(proc: Processor) {
     selectedProcessor = proc;
     selectedFiles = [];
@@ -80,10 +109,15 @@
   }
 
   function goBack() {
-    selectedProcessor = null;
-    selectedFiles = [];
-    options = {};
-    error = "";
+    if (selectedProcessor) {
+      selectedProcessor = null;
+      selectedFiles = [];
+      options = {};
+      error = "";
+    } else if (selectedCategory) {
+      selectedCategory = null;
+      error = "";
+    }
   }
 
   function procLabel(proc: Processor): string {
@@ -150,16 +184,33 @@
       </Alert.Root>
     {/if}
 
-    {#if !selectedProcessor}
-      <!-- ── Grid view ── -->
+    {#if !selectedCategory && !selectedProcessor}
+      <!-- ── State 1: Category grid ── -->
       <div class="flex flex-col gap-1">
         <h1 class="text-2xl font-bold">{$_("home.title")}</h1>
         <p class="text-sm text-muted-foreground">{$_("home.subtitle")}</p>
       </div>
 
-      <ProcessorGrid {processors} onselect={selectProcessor} />
-    {:else}
-      <!-- ── Tool view ── -->
+      <CategoryGrid {categories} {processorCounts} onselect={selectCategory} />
+    {:else if selectedCategory && !selectedProcessor}
+      <!-- ── State 2: Processor grid (filtered by category) ── -->
+      {@const CatIcon = getCategoryIcon(selectedCategory)}
+
+      <div class="flex items-center gap-3">
+        <Button onclick={goBack} variant="ghost" size="icon-sm">
+          <ArrowLeft class="size-4" />
+        </Button>
+        <div class="flex items-center gap-2.5">
+          <div class="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <CatIcon class="size-4" />
+          </div>
+          <h1 class="text-lg font-bold">{$_(`categories.${selectedCategory}.label`)}</h1>
+        </div>
+      </div>
+
+      <ProcessorGrid processors={filteredProcessors} onselect={selectProcessor} />
+    {:else if selectedProcessor}
+      <!-- ── State 3: Tool view ── -->
       {@const Icon = getProcessorIcon(selectedProcessor.id)}
 
       <div class="flex items-center gap-3">

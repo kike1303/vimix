@@ -3,6 +3,24 @@
     "name": "Vimix",
     "tagline": "Herramientas de procesamiento de medios"
   },
+  "categories": {
+    "video": {
+      "label": "Video",
+      "description": "Convierte, recorta, comprime y edita videos"
+    },
+    "image": {
+      "label": "Imagen",
+      "description": "Convierte, comprime y edita imagenes"
+    },
+    "pdf": {
+      "label": "PDF",
+      "description": "Une, divide, comprime, protege y edita PDFs"
+    },
+    "audio": {
+      "label": "Audio",
+      "description": "Convierte, recorta y extrae audio"
+    }
+  },
   "home": {
     "title": "Que quieres hacer?",
     "subtitle": "Elige una herramienta para comenzar.",
@@ -22,7 +40,8 @@
     "fileCount": "{count} archivos seleccionados",
     "submitting": "Subiendo...",
     "errorConnect": "No se pudo conectar a la API. Esta corriendo el servicio?",
-    "errorUpload": "Error al subir el archivo"
+    "errorUpload": "Error al subir el archivo",
+    "toolCount": "{count} herramientas"
   },
   "job": {
     "title": "Procesando",

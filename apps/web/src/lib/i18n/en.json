@@ -3,6 +3,24 @@
     "name": "Vimix",
     "tagline": "Media processing toolkit"
   },
+  "categories": {
+    "video": {
+      "label": "Video",
+      "description": "Convert, trim, compress, and edit videos"
+    },
+    "image": {
+      "label": "Image",
+      "description": "Convert, compress, and edit images"
+    },
+    "pdf": {
+      "label": "PDF",
+      "description": "Merge, split, compress, protect, and edit PDFs"
+    },
+    "audio": {
+      "label": "Audio",
+      "description": "Convert, trim, and extract audio"
+    }
+  },
   "home": {
     "title": "What do you want to do?",
     "subtitle": "Choose a tool to get started.",
@@ -22,7 +40,8 @@
     "fileCount": "{count} files selected",
     "submitting": "Uploading...",
     "errorConnect": "Could not connect to the API. Is the processor service running?",
-    "errorUpload": "Upload failed"
+    "errorUpload": "Upload failed",
+    "toolCount": "{count} tools"
   },
   "job": {
     "title": "Processing",
