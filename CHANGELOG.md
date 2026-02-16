@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-15
+
+### Added
+
+- Category navigation: processors are now grouped into Video, Image, PDF, and Audio categories with a two-step selection flow
+- Download toast notifications: success/error feedback when downloading processed files (single and batch)
+- File reordering for multi-file processors (e.g. PDF Merge): drag-and-drop and arrow buttons to choose merge order before processing
+- Back-to-processor navigation: the back button on job/batch result pages now returns to the processor's tool view instead of the home screen
+
+### Changed
+
+- Home page flow updated from 2 states to 3 (categories → processors → tool view)
+- Batch "Download All" now uses blob-based downloads (Tauri-safe) instead of direct link navigation
+
+### Dependencies
+
+- Added `svelte-sonner` for toast notifications
+
 ## [0.2.4] - 2026-02-13
 
 ### Fixed
