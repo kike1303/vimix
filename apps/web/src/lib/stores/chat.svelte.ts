@@ -59,6 +59,29 @@ function genId(): string {
   return crypto.randomUUID();
 }
 
+function parseApiError(e: unknown): string {
+  const msg = e instanceof Error ? e.message : String(e);
+  if (/429|too many request/i.test(msg)) {
+    return "Rate limit exceeded — too many requests. Wait a moment and try again, or switch to a different model.";
+  }
+  if (/401|unauthorized|invalid.*key/i.test(msg)) {
+    return "Invalid API key. Check your key in the chat settings.";
+  }
+  if (/403|forbidden/i.test(msg)) {
+    return "Access denied. Your API key may not have permission for this model.";
+  }
+  if (/404|not found/i.test(msg)) {
+    return "Model not found. It may have been deprecated — try selecting a different model.";
+  }
+  if (/500|502|503|504|internal server|bad gateway|service unavailable/i.test(msg)) {
+    return "The AI provider is temporarily unavailable. Try again in a moment.";
+  }
+  if (/network|fetch|ECONNREFUSED|ENOTFOUND/i.test(msg)) {
+    return "Could not reach the AI provider. Check your internet connection.";
+  }
+  return msg;
+}
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -257,9 +280,14 @@ export async function sendMessage(content: string) {
     }
   } catch (e) {
     if ((e as Error).name !== "AbortError") {
-      const errorMsg = `Error: ${e instanceof Error ? e.message : "Something went wrong"}`;
-      streamedContent += streamedContent.length > 0 ? "\n\n" + errorMsg : errorMsg;
-      flushAssistant(assistantIdx, streamedContent, streamedToolCalls);
+      const errorMsg = parseApiError(e);
+      const existing = chatState.messages[assistantIdx];
+      chatState.messages[assistantIdx] = {
+        ...existing,
+        content: streamedContent,
+        toolCalls: [...streamedToolCalls],
+        error: errorMsg,
+      };
     }
   } finally {
     chatState.isStreaming = false;

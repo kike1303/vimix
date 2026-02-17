@@ -4,6 +4,7 @@
   import User from "lucide-svelte/icons/user";
   import Sparkles from "lucide-svelte/icons/sparkles";
   import Paperclip from "lucide-svelte/icons/paperclip";
+  import TriangleAlert from "lucide-svelte/icons/triangle-alert";
 
   let { message }: { message: ChatMessage } = $props();
 
@@ -51,6 +52,13 @@
       {#each message.toolCalls as tc (tc.id)}
         <ChatToolCallCard toolCall={tc} />
       {/each}
+    {/if}
+
+    {#if message.error}
+      <div class="flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/10 px-3.5 py-2 text-sm text-destructive">
+        <TriangleAlert class="mt-0.5 size-4 shrink-0" />
+        <span>{message.error}</span>
+      </div>
     {/if}
   </div>
 </div>

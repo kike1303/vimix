@@ -4,6 +4,7 @@ export interface ChatMessage {
   content: string;
   files?: ChatFile[];
   toolCalls?: ChatToolCall[];
+  error?: string;
   createdAt: number;
 }
 
