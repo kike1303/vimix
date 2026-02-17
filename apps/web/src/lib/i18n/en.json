@@ -24,6 +24,8 @@
   "home": {
     "title": "What do you want to do?",
     "subtitle": "Choose a tool to get started.",
+    "chatBanner": "Try the AI chat — describe what you need and let the assistant do it for you",
+    "mcpHint": "Vimix also connects via MCP to AI agents like Claude Code, Cursor, etc. — automatically when the app is running.",
     "back": "Back",
     "loading": "Starting up...",
     "loadingSub": "Preparing the processing engine",
@@ -366,7 +368,16 @@
     },
     "modelsAvailable": "{count} models available",
     "ollamaNotRunning": "Ollama is not running. Install it from",
-    "ollamaNoModels": "No models found. Install a model with: ollama pull llama3.2"
+    "ollamaNoModels": "No models found. Install a model with: ollama pull llama3.2",
+    "oauth": {
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signOut": "Sign out",
+      "connectedVia": "Connected via subscription",
+      "portBusy": "Port 1455 is in use. Close other apps using it and try again.",
+      "timeout": "Sign in timed out. Please try again.",
+      "failed": "Sign in failed. Please try again."
+    }
   },
   "theme": {
     "toggle": "Toggle theme"

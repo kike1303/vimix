@@ -40,6 +40,9 @@ export interface ProviderConfig {
   baseUrl?: string;
   connected: boolean;
   models: string[];
+  authType?: "api_key" | "oauth";
+  oauthRefreshToken?: string;
+  oauthExpiresAt?: number;
 }
 
 /** Fallback model lists when API fetch fails (e.g. CORS) */
@@ -49,7 +52,7 @@ export const FALLBACK_MODELS: Record<ProviderId, string[]> = {
     "claude-haiku-4-5-20251001",
     "claude-opus-4-20250514",
   ],
-  openai: ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "o3-mini"],
+  openai: ["gpt-5.2", "gpt-5.2-pro", "gpt-5.1", "gpt-5-mini"],
   google: ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash"],
   openrouter: [
     "anthropic/claude-sonnet-4-5",

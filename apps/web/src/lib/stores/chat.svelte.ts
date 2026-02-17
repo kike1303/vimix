@@ -1,7 +1,7 @@
 import { streamText, stepCountIs } from "ai";
 import { createProvider } from "$lib/ai/client";
 import { createTools, getSystemPrompt } from "$lib/ai/tools";
-import { getActiveProvider } from "$lib/stores/ai-providers.svelte";
+import { getActiveProvider, ensureTokenFresh } from "$lib/stores/ai-providers.svelte";
 import { subscribeProgress, fetchJob } from "$lib/api";
 import type { ChatMessage, ChatFile, ChatToolCall } from "$lib/ai/types";
 
@@ -182,6 +182,23 @@ export async function sendMessage(content: string) {
   const provider = getActiveProvider();
   if (!provider) return;
 
+  // Auto-refresh OAuth token if needed
+  if (provider.config.authType === "oauth") {
+    const fresh = await ensureTokenFresh(provider.config.id);
+    if (!fresh) {
+      // Token expired and refresh failed — add error message
+      chatState.messages.push({
+        id: genId(),
+        role: "assistant",
+        content: "",
+        error: "Session expired. Please sign in again in the AI settings.",
+        createdAt: Date.now(),
+      });
+      saveHistory([...chatState.messages]);
+      return;
+    }
+  }
+
   const userFiles = [...chatState.attachedFiles];
   chatState.messages.push({
     id: genId(),
@@ -209,31 +226,62 @@ export async function sendMessage(content: string) {
 
   try {
     const model = createProvider(provider.config, provider.modelId);
-    const tools = createTools(userFiles);
 
+    // Collect ALL files from the conversation (not just the current message)
+    // so the AI can reference files from earlier messages in follow-ups
+    const allFiles: ChatFile[] = [];
+    for (const m of chatState.messages) {
+      if (m.files) {
+        for (const f of m.files) {
+          if (f.file) allFiles.push(f);
+        }
+      }
+    }
+
+    const tools = createTools(allFiles);
+
+    // Build AI messages with global file indices that match allFiles order
+    let globalFileIdx = 0;
     const aiMessages = chatState.messages.slice(0, -1).map((m) => {
       let text = m.content;
-      // Include file metadata so the AI knows what files the user attached
       if (m.files && m.files.length > 0) {
-        const fileList = m.files
-          .map((f, i) => `  [${i}] ${f.name} (${f.type}, ${formatBytes(f.size)})`)
-          .join("\n");
-        text += `\n\n[Attached files:\n${fileList}\n]`;
+        const validFiles = m.files.filter((f) => f.file);
+        if (validFiles.length > 0) {
+          const fileList = validFiles
+            .map((f) => {
+              const line = `  [${globalFileIdx}] ${f.name} (${f.type}, ${formatBytes(f.size)})`;
+              globalFileIdx++;
+              return line;
+            })
+            .join("\n");
+          text += `\n\n[Attached files:\n${fileList}\n]`;
+        }
       }
       return { role: m.role as "user" | "assistant", content: text };
     });
 
+    const systemPrompt = getSystemPrompt();
+    const isOAuth = provider.config.authType === "oauth";
+
     const result = streamText({
       model,
-      system: getSystemPrompt(),
+      // ChatGPT backend requires `instructions` instead of system messages
+      system: isOAuth ? undefined : systemPrompt,
       messages: aiMessages,
       tools,
       stopWhen: stepCountIs(5),
       abortSignal: abortController?.signal,
+      ...(isOAuth && {
+        providerOptions: {
+          openai: { instructions: systemPrompt, store: false },
+        },
+      }),
     });
 
     for await (const part of result.fullStream) {
-      if (part.type === "text-delta") {
+      if (part.type === "error") {
+        throw part.error instanceof Error ? part.error : new Error(String(part.error));
+      } else if (part.type === "text-delta") {
         streamedContent += part.text;
         flushAssistant(assistantIdx, streamedContent, streamedToolCalls);
       } else if (part.type === "tool-call") {
@@ -283,8 +331,10 @@ export async function sendMessage(content: string) {
       const errorMsg = parseApiError(e);
       const existing = chatState.messages[assistantIdx];
       chatState.messages[assistantIdx] = {
-        ...existing,
-        content: streamedContent,
+        id: existing.id,
+        role: existing.role,
+        createdAt: existing.createdAt,
+        content: streamedContent || "",
         toolCalls: [...streamedToolCalls],
         error: errorMsg,
       };

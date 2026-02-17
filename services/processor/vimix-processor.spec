@@ -89,6 +89,7 @@ a = Analysis(
         "app.routers",
         "app.routers.jobs",
         "app.routers.processors",
+        "app.routers.oauth",
         "app.processors",
         "app.processors.registry",
         "app.processors.base",

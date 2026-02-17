@@ -4,17 +4,20 @@ import { fetchProcessors, createJob, createBatch } from "$lib/api";
 import type { ChatFile } from "./types";
 
 export function getSystemPrompt(): string {
-  return `You are Vimix Assistant, a helpful AI inside the Vimix media processing app. Vimix runs locally on the user's machine — all processing is 100% private, nothing leaves their computer.
+  return `You are Vimix Assistant, a helpful AI inside the Vimix media processing app. Vimix runs locally — nothing leaves the user's computer.
 
-Your job is to help users process their files. You can:
-1. List available processors and explain what each one does
-2. Process files the user has attached to the chat
+## Rules (MUST follow strictly)
 
-When the user asks to process a file, use the process_file tool. If they attach multiple files for the same operation, use batch_process.
+1. **List processors first**: ALWAYS call list_processors before processing.
+2. **Process ONCE**: Call process_file exactly ONCE per request. NEVER call it twice.
+3. **Pass ALL requested options**: When the user specifies values (format, resolution, etc.), you MUST pass ALL of them in the options object. NEVER use defaults when the user gave explicit values. Example: "webp at 256px" → options must be { "format": "webp", "resolution": 256 }.
+4. **NEVER ask and execute in the same turn**: Either execute silently OR ask a question — NEVER both. If the request is clear, just do it. If you need clarification, ask and STOP — do NOT process.
+5. **Understand options**: "resolution" = output WIDTH in pixels (height auto-scales). NEVER ask about width vs height.
+6. **Files persist**: Previously attached files remain available by their original index across the whole conversation.
+7. **batch_process**: Only when user attaches multiple files for the same operation.
+8. No file attached? Ask them to use the paperclip button.
 
-Always call list_processors first if you need to know what tools are available or to find the right processor for a task. Be concise and friendly. When a tool finishes, tell the user the result and offer to help with more.
-
-If the user hasn't attached a file but asks to process something, ask them to attach the file using the paperclip button.`;
+Be concise. Respond in the same language the user writes in.`;
 }
 
 export function createTools(attachedFiles: ChatFile[]) {
@@ -26,10 +29,20 @@ export function createTools(attachedFiles: ChatFile[]) {
       execute: async () => {
         const processors = await fetchProcessors();
         return processors
-          .map(
-            (p) =>
-              `**${p.label}** (\`${p.id}\`): ${p.description}\n  Accepts: ${p.accepted_extensions.join(", ")}`,
-          )
+          .map((p) => {
+            let text = `**${p.label}** (\`${p.id}\`): ${p.description}\n  Accepts: ${p.accepted_extensions.join(", ")}`;
+            if (p.options_schema.length > 0) {
+              const opts = p.options_schema.map((o) => {
+                let desc = `    - \`${o.id}\` (${o.type}): default=${JSON.stringify(o.default)}`;
+                if (o.choices) desc += ` choices=[${o.choices.map((c) => c.value).join(", ")}]`;
+                if (o.min != null) desc += ` min=${o.min}`;
+                if (o.max != null) desc += ` max=${o.max}`;
+                return desc;
+              });
+              text += `\n  Options:\n${opts.join("\n")}`;
+            }
+            return text;
+          })
           .join("\n\n");
       },
     }),

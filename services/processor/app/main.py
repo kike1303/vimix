@@ -24,7 +24,7 @@ if getattr(sys, "frozen", False):
         os.environ.setdefault("U2NET_HOME", _model_dir)
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import jobs, processors
+from app.routers import jobs, processors, oauth
 from app.services.job_manager import job_manager
 from app.services.file_manager import cleanup_job
 
@@ -126,7 +126,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Vimix – Processor API",
-    version="0.6.0",
+    version="0.7.0",
     lifespan=lifespan,
 )
 
@@ -139,6 +139,7 @@ app.add_middleware(
 
 app.include_router(processors.router)
 app.include_router(jobs.router)
+app.include_router(oauth.router)
 
 
 @app.get("/health")

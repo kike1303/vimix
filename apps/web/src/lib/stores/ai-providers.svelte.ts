@@ -7,6 +7,13 @@ import {
   type ModelOption,
   type SelectedModel,
 } from "$lib/ai/types";
+import {
+  generatePKCE,
+  generateState,
+  buildAuthUrl,
+  exchangeCodeForTokens,
+  refreshAccessToken,
+} from "$lib/ai/oauth";
 
 const PROVIDERS_KEY = "vimix-ai-providers";
 const MODEL_KEY = "vimix-selected-model";
@@ -191,8 +198,8 @@ export async function fetchModelsForProvider(config: ProviderConfig): Promise<st
         return await fetchOpenAICompatModels(
           config.apiKey,
           "https://api.openai.com/v1",
-          // Keep gpt-*/o*/chatgpt-* but exclude dated variants (YYYY-MM-DD)
-          (id) => /^(gpt-|o[0-9]|chatgpt-)/.test(id) && !/\d{4}-\d{2}-\d{2}/.test(id),
+          // Keep only GPT-5 family, exclude dated snapshots (YYYY-MM-DD)
+          (id) => /^gpt-5/.test(id) && !/\d{4}-\d{2}-\d{2}/.test(id),
         );
       case "anthropic":
         return await fetchAnthropicModels(config.apiKey);
@@ -271,7 +278,14 @@ function autoSelectFirstModel(providerId: ProviderId, models: string[]) {
 }
 
 export function disconnectProvider(id: ProviderId) {
-  updateProvider(id, { connected: false, models: [], apiKey: "" });
+  updateProvider(id, {
+    connected: false,
+    models: [],
+    apiKey: "",
+    authType: undefined,
+    oauthRefreshToken: undefined,
+    oauthExpiresAt: undefined,
+  });
   // If the disconnected provider was selected, clear selection
   if (_selectedModel.value?.providerId === id) {
     // Try to select another connected provider
@@ -297,4 +311,129 @@ export async function detectOllama(): Promise<boolean> {
     // not running
   }
   return false;
+}
+
+// ── OAuth ──────────────────────────────────────────────────────
+
+function apiUrl(): string {
+  return import.meta.env.VITE_API_URL || "http://localhost:8787";
+}
+
+/**
+ * Full OAuth PKCE flow for OpenAI:
+ * 1. Start callback listener on backend
+ * 2. Open browser to OpenAI authorize URL
+ * 3. Poll backend for the auth code
+ * 4. Exchange code for tokens
+ * 5. Store tokens and fetch models
+ */
+export async function connectProviderOAuth(
+  id: ProviderId,
+): Promise<{ success: boolean; error?: string }> {
+  const { verifier, challenge } = await generatePKCE();
+  const state = generateState();
+
+  // Tell backend to start the callback listener
+  const startRes = await fetch(`${apiUrl()}/oauth/start`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ state }),
+  });
+
+  if (!startRes.ok) {
+    const err = await startRes.json().catch(() => ({ detail: "Failed to start OAuth" }));
+    if (startRes.status === 409) return { success: false, error: "port_busy" };
+    return { success: false, error: err.detail };
+  }
+
+  // Open the authorization URL in the user's default browser
+  const authUrl = buildAuthUrl(state, challenge);
+  try {
+    const { openUrl } = await import("@tauri-apps/plugin-opener");
+    await openUrl(authUrl);
+  } catch {
+    // Not in Tauri — use regular browser open
+    window.open(authUrl, "_blank");
+  }
+
+  // Poll for the code (every 2s, up to 5 minutes)
+  const maxAttempts = 150;
+  let code: string | null = null;
+  for (let i = 0; i < maxAttempts; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    try {
+      const pollRes = await fetch(`${apiUrl()}/oauth/poll/${state}`);
+      if (!pollRes.ok) break;
+      const data = await pollRes.json();
+      if (data.status === "received" && data.code) {
+        code = data.code;
+        break;
+      }
+    } catch {
+      break;
+    }
+  }
+
+  if (!code) {
+    // Clean up the listener
+    await fetch(`${apiUrl()}/oauth/stop`, { method: "POST" }).catch(() => {});
+    return { success: false, error: "timeout" };
+  }
+
+  // Exchange code for tokens
+  try {
+    const tokens = await exchangeCodeForTokens(code, verifier);
+    const expiresAt = Date.now() + tokens.expires_in * 1000;
+
+    // The access_token works as a Bearer token — same as an API key
+    updateProvider(id, {
+      apiKey: tokens.access_token,
+      authType: "oauth",
+      oauthRefreshToken: tokens.refresh_token,
+      oauthExpiresAt: expiresAt,
+    });
+
+    // Fetch models to validate the token
+    const provider = providers.find((p) => p.id === id);
+    if (provider) {
+      let models = await fetchModelsForProvider({ ...provider, apiKey: tokens.access_token });
+      if (models.length === 0) models = FALLBACK_MODELS[id] || [];
+      updateProvider(id, { connected: true, models });
+      autoSelectFirstModel(id, models);
+    }
+
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : "Token exchange failed" };
+  }
+}
+
+/**
+ * Refresh the OAuth token if it expires within 5 minutes.
+ * Returns true if the token is valid (fresh or refreshed), false if refresh failed.
+ */
+export async function ensureTokenFresh(id: ProviderId): Promise<boolean> {
+  const provider = providers.find((p) => p.id === id);
+  if (!provider || provider.authType !== "oauth") return true;
+
+  const expiresAt = provider.oauthExpiresAt || 0;
+  const fiveMinutes = 5 * 60 * 1000;
+
+  if (Date.now() + fiveMinutes < expiresAt) return true; // Still fresh
+
+  const refreshToken = provider.oauthRefreshToken;
+  if (!refreshToken) return false;
+
+  try {
+    const tokens = await refreshAccessToken(refreshToken);
+    const newExpiresAt = Date.now() + tokens.expires_in * 1000;
+    updateProvider(id, {
+      apiKey: tokens.access_token,
+      oauthRefreshToken: tokens.refresh_token || refreshToken,
+      oauthExpiresAt: newExpiresAt,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -22,8 +22,10 @@
     }
   },
   "home": {
-    "title": "Que quieres hacer?",
+    "title": "¿Qué quieres hacer?",
     "subtitle": "Elige una herramienta para comenzar.",
+    "chatBanner": "Prueba el chat con IA — describe lo que necesitas y deja que el asistente lo haga por ti",
+    "mcpHint": "Vimix también se conecta vía MCP a agentes de IA como Claude Code, Cursor, etc. — automáticamente cuando la app está abierta.",
     "back": "Volver",
     "loading": "Iniciando...",
     "loadingSub": "Preparando el motor de procesamiento",
@@ -319,8 +321,8 @@
   },
   "chat": {
     "welcome": {
-      "title": "Hola! Soy el Asistente Vimix",
-      "subtitle": "Dime que quieres hacer con tus archivos. Puedo procesar imagenes, videos, PDFs y audio — todo localmente en tu computadora.",
+      "title": "¡Hola! Soy el Asistente Vimix",
+      "subtitle": "Dime qué quieres hacer con tus archivos. Puedo procesar imágenes, videos, PDFs y audio — todo localmente en tu computadora.",
       "configure": "Configurar proveedor de IA"
     },
     "suggestions": {
@@ -332,10 +334,10 @@
     "header": {
       "noProvider": "Sin proveedor de IA configurado",
       "newChat": "Nuevo chat",
-      "settings": "Configuracion de IA"
+      "settings": "Configuración de IA"
     },
     "input": {
-      "placeholder": "Describe lo que quieres hacer...",
+      "placeholder": "Describe lo que quieres hacer…",
       "noProvider": "Configura un proveedor de IA para empezar a chatear",
       "attach": "Adjuntar archivo",
       "send": "Enviar",
@@ -366,7 +368,16 @@
     },
     "modelsAvailable": "{count} modelos disponibles",
     "ollamaNotRunning": "Ollama no esta corriendo. Instalalo desde",
-    "ollamaNoModels": "No se encontraron modelos. Instala uno con: ollama pull llama3.2"
+    "ollamaNoModels": "No se encontraron modelos. Instala uno con: ollama pull llama3.2",
+    "oauth": {
+      "signIn": "Iniciar sesion",
+      "signingIn": "Iniciando sesion...",
+      "signOut": "Cerrar sesion",
+      "connectedVia": "Conectado via suscripcion",
+      "portBusy": "El puerto 1455 esta en uso. Cierra otras apps que lo usen e intenta de nuevo.",
+      "timeout": "Se agoto el tiempo de inicio de sesion. Intenta de nuevo.",
+      "failed": "Error al iniciar sesion. Intenta de nuevo."
+    }
   },
   "theme": {
     "toggle": "Cambiar tema"

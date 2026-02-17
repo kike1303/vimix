@@ -26,6 +26,14 @@ export function createProvider(config: ProviderConfig, modelId: string) {
       return openai(modelId);
     }
     case "openai": {
+      if (config.authType === "oauth") {
+        // ChatGPT subscription tokens use the ChatGPT backend, not api.openai.com
+        const openai = createOpenAI({
+          apiKey: config.apiKey,
+          baseURL: "https://chatgpt.com/backend-api/codex",
+        });
+        return openai.responses(modelId);
+      }
       const openai = createOpenAI({
         apiKey: config.apiKey,
       });

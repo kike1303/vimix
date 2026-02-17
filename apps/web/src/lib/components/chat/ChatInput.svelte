@@ -125,11 +125,11 @@
 
     {#if streaming}
       <button
-        class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive text-destructive-foreground transition-colors hover:bg-destructive/90"
+        class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         onclick={stopStreaming}
         title={$_("chat.input.stop")}
       >
-        <Square class="size-4" />
+        <Square class="size-3.5 fill-current" />
       </button>
     {:else}
       <button

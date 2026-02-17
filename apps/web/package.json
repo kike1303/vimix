@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -37,6 +37,7 @@
     "@ai-sdk/anthropic": "^3.0.44",
     "@ai-sdk/google": "^3.0.29",
     "@ai-sdk/openai": "^3.0.29",
+    "@tauri-apps/plugin-opener": "^2.5.3",
     "@tauri-apps/plugin-updater": "^2.10.0",
     "ai": "^6.0.86",
     "svelte-i18n": "^4.0.1",

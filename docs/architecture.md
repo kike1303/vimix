@@ -257,8 +257,25 @@ The in-app AI chat lets users describe what they want in natural language, and t
 | Ollama | Local (free) | `@ai-sdk/openai` (compat mode) |
 | Google Gemini | Free API key | `@ai-sdk/google` |
 | Anthropic | API key | `@ai-sdk/anthropic` |
-| OpenAI | API key | `@ai-sdk/openai` |
+| OpenAI | API key or OAuth | `@ai-sdk/openai` |
 | OpenRouter | API key | `@ai-sdk/openai` (custom baseURL) |
+
+### OAuth (OpenAI)
+
+ChatGPT Plus/Pro subscribers can sign in with their OpenAI account instead of using an API key. The flow uses OAuth PKCE with a public client:
+
+1. Frontend generates PKCE `code_verifier` + `code_challenge` via Web Crypto API
+2. Backend starts a temporary HTTP listener on port 1455 (`POST /oauth/start`)
+3. Frontend opens `https://auth.openai.com/oauth/authorize?...` in the browser
+4. User logs in at OpenAI and approves the app
+5. OpenAI redirects to `http://localhost:1455/auth/callback?code=...&state=...`
+6. Backend captures the code, serves a success page, shuts down
+7. Frontend polls `GET /oauth/poll/{state}` to retrieve the code
+8. Frontend exchanges the code for tokens directly with OpenAI's token endpoint
+9. The `access_token` is stored as the provider's `apiKey` (works as a Bearer token)
+10. Token auto-refreshes before expiry using the `refresh_token`
+
+The callback server auto-shuts down after 5 minutes if unused.
 
 ### Key files
 
@@ -267,7 +284,9 @@ The in-app AI chat lets users describe what they want in natural language, and t
 | `src/lib/ai/types.ts` | TypeScript types for chat, providers, tool calls |
 | `src/lib/ai/client.ts` | Provider factory: config → AI SDK model instance |
 | `src/lib/ai/tools.ts` | Tool definitions (list_processors, process_file, batch_process) |
+| `src/lib/ai/oauth.ts` | OAuth PKCE utilities (token exchange, refresh) |
 | `src/lib/stores/chat.svelte.ts` | Chat state: messages, streaming, tool execution loop |
-| `src/lib/stores/ai-providers.svelte.ts` | Provider config: API keys, models, Ollama detection |
+| `src/lib/stores/ai-providers.svelte.ts` | Provider config: API keys, models, OAuth, Ollama detection |
 | `src/lib/components/chat/ChatView.svelte` | Main chat layout |
 | `src/lib/components/settings/ProviderSettings.svelte` | Provider configuration dialog |
+| `src/lib/components/settings/OAuthProviderCard.svelte` | OAuth sign-in card (connected/disconnected/disabled) |

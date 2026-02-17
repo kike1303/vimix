@@ -27,6 +27,9 @@
   import FileUpload from "$lib/components/FileUpload.svelte";
   import { favoriteIds } from "$lib/stores/favorites.svelte";
   import Heart from "lucide-svelte/icons/heart";
+  import Sparkles from "lucide-svelte/icons/sparkles";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
+  import Cable from "lucide-svelte/icons/cable";
 
   let processors = $state<Processor[]>([]);
   let selectedCategory = $state<string | null>(null);
@@ -212,6 +215,28 @@
         <h1 class="text-2xl font-bold">{$_("home.title")}</h1>
         <p class="text-sm text-muted-foreground">{$_("home.subtitle")}</p>
       </div>
+
+      <a
+        href="/chat"
+        class="group flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 transition-all hover:border-primary/40 hover:bg-primary/10"
+      >
+        <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <Sparkles class="size-4" />
+        </div>
+        <p class="flex-1 text-sm font-medium text-foreground">
+          {$_("home.chatBanner")}
+        </p>
+        <ArrowRight class="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+      </a>
+
+      <div class="flex items-center gap-2.5 rounded-lg px-1 py-1">
+        <Cable class="size-3.5 shrink-0 text-muted-foreground" />
+        <p class="text-xs text-muted-foreground">
+          {$_("home.mcpHint")}
+        </p>
+      </div>
+
+      <hr class="border-border" />
 
       {#if favoriteProcessors.length > 0}
         <div class="flex flex-col gap-3">

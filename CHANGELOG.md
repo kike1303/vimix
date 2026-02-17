@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-02-17
+
+### Added
+
+- OpenAI OAuth sign-in: ChatGPT Plus/Pro subscribers can now sign in with their OpenAI account instead of an API key (OAuth PKCE flow)
+- Automatic token refresh for OAuth sessions before expiry
+- User-friendly error messages in chat for API failures (429 rate limit, invalid key, model not found, provider down, network errors)
+- AI chat banner on home page promoting the chat feature
+- MCP info hint on home page explaining automatic agent connectivity (Claude Code, Cursor, etc.)
+
+### Improved
+
+- AI assistant now follows processor options precisely (format, resolution, etc.) without asking unnecessary questions
+- Attached files persist across conversation turns — follow-up messages can reference files from earlier in the chat
+- Refined AI system prompt with stricter behavioral rules for more reliable single-pass processing
+
+### Fixed
+
+- Provider card: API key placeholder no longer assumes "sk-..." prefix
+- Provider card: show/hide password toggle vertically centered in input
+- Spanish i18n: fixed missing accents and opening punctuation marks (¿Qué, ¡Hola, imágenes, Configuración)
+- Stop streaming button restyled to match app palette (was red with black square)
+- Removed "Claude Pro / Max — Coming Soon" placeholder from settings
+
 ## [0.6.0] - 2026-02-16
 
 ### Added

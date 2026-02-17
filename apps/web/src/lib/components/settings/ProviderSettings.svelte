@@ -2,6 +2,7 @@
   import { _ } from "svelte-i18n";
   import { providers, detectOllama } from "$lib/stores/ai-providers.svelte";
   import ProviderCard from "./ProviderCard.svelte";
+  import OAuthProviderCard from "./OAuthProviderCard.svelte";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import Loader from "lucide-svelte/icons/loader";
   import Check from "lucide-svelte/icons/check";
@@ -24,13 +25,19 @@
     }
   });
 
+  const openaiProvider = $derived(providers.find((p) => p.id === "openai"));
+  const openaiConnectedViaOAuth = $derived(
+    openaiProvider?.connected && openaiProvider?.authType === "oauth",
+  );
+
   const apiProviders = $derived(
     providers.filter(
       (p) =>
-        p.id === "anthropic" ||
-        p.id === "openai" ||
-        p.id === "google" ||
-        p.id === "openrouter",
+        (p.id === "anthropic" ||
+          p.id === "openai" ||
+          p.id === "google" ||
+          p.id === "openrouter") &&
+        !(p.id === "openai" && openaiConnectedViaOAuth),
     ),
   );
   const localProviders = $derived(providers.filter((p) => p.id === "ollama"));
@@ -44,41 +51,17 @@
     </Dialog.Header>
 
     <div class="space-y-5 py-2">
-      <!-- OAuth Subscriptions (Coming Soon) -->
+      <!-- OAuth Subscriptions -->
       <div>
         <h3 class="mb-2 text-xs font-medium uppercase text-muted-foreground">
           {$_("settings.tier.subscription")}
         </h3>
         <div class="space-y-2">
-          <div class="rounded-lg border border-dashed border-border p-3 opacity-60">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="size-2 rounded-full bg-muted-foreground/30"></div>
-                <span class="text-sm font-medium">Claude Pro / Max</span>
-              </div>
-              <span class="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-                {$_("settings.comingSoon")}
-              </span>
-            </div>
-            <p class="mt-2 text-[10px] text-muted-foreground">
-              {$_("settings.oauthDescription.claude")}
-            </p>
-          </div>
-
-          <div class="rounded-lg border border-dashed border-border p-3 opacity-60">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="size-2 rounded-full bg-muted-foreground/30"></div>
-                <span class="text-sm font-medium">ChatGPT Plus</span>
-              </div>
-              <span class="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-                {$_("settings.comingSoon")}
-              </span>
-            </div>
-            <p class="mt-2 text-[10px] text-muted-foreground">
-              {$_("settings.oauthDescription.chatgpt")}
-            </p>
-          </div>
+          <OAuthProviderCard
+            provider={openaiProvider}
+            label="ChatGPT Plus / Pro"
+            description={$_("settings.oauthDescription.chatgpt")}
+          />
         </div>
       </div>
 
