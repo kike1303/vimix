@@ -4,12 +4,16 @@
   import { ModeWatcher } from "mode-watcher";
   import { _, isLoading } from "svelte-i18n";
   import { Tooltip } from "bits-ui";
+  import { page } from "$app/state";
   import ThemeToggle from "$lib/components/ThemeToggle.svelte";
   import LangToggle from "$lib/components/LangToggle.svelte";
+  import NavToggle from "$lib/components/NavToggle.svelte";
   import UpdateNotifier from "$lib/components/UpdateNotifier.svelte";
   import { Toaster } from "$lib/components/ui/sonner/index.js";
 
   let { children } = $props();
+
+  const isChat = $derived(page.url.pathname.startsWith("/chat"));
 </script>
 
 <ModeWatcher />
@@ -27,23 +31,26 @@
           <img src="/icon.png" alt="Vimix" class="size-7 rounded-md" />
           Vimix
         </a>
-        <div class="flex items-center gap-1">
-          <span class="mr-2 hidden text-xs text-muted-foreground sm:block">
+        <div class="flex items-center gap-2">
+          <span class="mr-1 hidden text-xs text-muted-foreground sm:block">
             {$_("app.tagline")}
           </span>
+          <NavToggle />
           <LangToggle />
           <ThemeToggle />
         </div>
       </div>
     </header>
 
-    <main class="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
+    <main class="w-full flex-1 {isChat ? '' : 'mx-auto max-w-4xl px-6 py-10'}">
       {@render children()}
     </main>
 
-    <footer class="border-t border-border py-4 text-center text-xs text-muted-foreground">
-      Vimix &mdash; {$_("app.tagline")}
-    </footer>
+    {#if !isChat}
+      <footer class="border-t border-border py-4 text-center text-xs text-muted-foreground">
+        Vimix &mdash; {$_("app.tagline")}
+      </footer>
+    {/if}
   </div>
 
   <UpdateNotifier />

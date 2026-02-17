@@ -313,6 +313,61 @@
     "downloadAll": "Download All",
     "backToHome": "New job"
   },
+  "nav": {
+    "tools": "Tools",
+    "chat": "Chat"
+  },
+  "chat": {
+    "welcome": {
+      "title": "Hi! I'm Vimix Assistant",
+      "subtitle": "Tell me what you want to do with your files. I can process images, videos, PDFs, and audio — all locally on your machine.",
+      "configure": "Configure AI provider"
+    },
+    "suggestions": {
+      "removeBg": "Remove the background from an image",
+      "compressVideo": "Compress a video",
+      "pdfToImage": "Convert a PDF to images",
+      "mergepdfs": "Merge multiple PDFs"
+    },
+    "header": {
+      "noProvider": "No AI provider configured",
+      "newChat": "New chat",
+      "settings": "AI settings"
+    },
+    "input": {
+      "placeholder": "Describe what you want to do...",
+      "noProvider": "Configure an AI provider to start chatting",
+      "attach": "Attach file",
+      "send": "Send",
+      "stop": "Stop"
+    },
+    "tool": {
+      "listProcessors": "Listing processors",
+      "processFile": "Processing file",
+      "batchProcess": "Batch processing"
+    }
+  },
+  "settings": {
+    "title": "AI Provider Settings",
+    "description": "Connect AI providers to use the chat assistant. Your API keys are stored locally in your browser.",
+    "tier": {
+      "subscription": "Subscriptions",
+      "apiKey": "API Key",
+      "local": "Local (Free)"
+    },
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "apiKey": "API Key",
+    "getKey": "Get key",
+    "comingSoon": "Coming soon",
+    "oauthDescription": {
+      "claude": "Use your Claude Pro or Max subscription. Sign in with your Anthropic account.",
+      "chatgpt": "Use your ChatGPT Plus subscription. Sign in with your OpenAI account."
+    },
+    "modelsAvailable": "{count} models available",
+    "ollamaNotRunning": "Ollama is not running. Install it from",
+    "ollamaNoModels": "No models found. Install a model with: ollama pull llama3.2"
+  },
   "theme": {
     "toggle": "Toggle theme"
   },

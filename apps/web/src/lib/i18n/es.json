@@ -313,6 +313,61 @@
     "downloadAll": "Descargar todo",
     "backToHome": "Nuevo trabajo"
   },
+  "nav": {
+    "tools": "Herramientas",
+    "chat": "Chat"
+  },
+  "chat": {
+    "welcome": {
+      "title": "Hola! Soy el Asistente Vimix",
+      "subtitle": "Dime que quieres hacer con tus archivos. Puedo procesar imagenes, videos, PDFs y audio — todo localmente en tu computadora.",
+      "configure": "Configurar proveedor de IA"
+    },
+    "suggestions": {
+      "removeBg": "Quitar el fondo de una imagen",
+      "compressVideo": "Comprimir un video",
+      "pdfToImage": "Convertir un PDF a imagenes",
+      "mergepdfs": "Unir varios PDFs"
+    },
+    "header": {
+      "noProvider": "Sin proveedor de IA configurado",
+      "newChat": "Nuevo chat",
+      "settings": "Configuracion de IA"
+    },
+    "input": {
+      "placeholder": "Describe lo que quieres hacer...",
+      "noProvider": "Configura un proveedor de IA para empezar a chatear",
+      "attach": "Adjuntar archivo",
+      "send": "Enviar",
+      "stop": "Detener"
+    },
+    "tool": {
+      "listProcessors": "Listando procesadores",
+      "processFile": "Procesando archivo",
+      "batchProcess": "Procesamiento por lotes"
+    }
+  },
+  "settings": {
+    "title": "Configuracion de Proveedor IA",
+    "description": "Conecta proveedores de IA para usar el asistente de chat. Tus claves API se guardan localmente en tu navegador.",
+    "tier": {
+      "subscription": "Suscripciones",
+      "apiKey": "Clave API",
+      "local": "Local (Gratis)"
+    },
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "apiKey": "Clave API",
+    "getKey": "Obtener clave",
+    "comingSoon": "Proximamente",
+    "oauthDescription": {
+      "claude": "Usa tu suscripcion Claude Pro o Max. Inicia sesion con tu cuenta de Anthropic.",
+      "chatgpt": "Usa tu suscripcion ChatGPT Plus. Inicia sesion con tu cuenta de OpenAI."
+    },
+    "modelsAvailable": "{count} modelos disponibles",
+    "ollamaNotRunning": "Ollama no esta corriendo. Instalalo desde",
+    "ollamaNoModels": "No se encontraron modelos. Instala uno con: ollama pull llama3.2"
+  },
   "theme": {
     "toggle": "Cambiar tema"
   },

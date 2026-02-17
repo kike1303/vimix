@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.6.0] - 2026-02-16
+
+### Added
+
+- AI Chat assistant: in-app chat interface where users can describe what they want and the AI executes it using Vimix processors
+- Multi-provider support: Ollama (local/free), Google Gemini (free API key), Anthropic, OpenAI, and OpenRouter
+- Tool execution: AI can list processors, process files, and run batch operations directly from the chat
+- Real-time progress tracking for AI-initiated processing jobs
+- Provider settings dialog with connection testing, model selection, and API key management
+- Automatic Ollama detection on localhost
+- Chat history persistence in localStorage
+- Full i18n support (English and Spanish) for all chat and settings UI
+- Nav toggle in header to switch between Tools and Chat views
 
 ## [0.5.0] - 2026-02-15
 

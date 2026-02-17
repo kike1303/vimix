@@ -1,6 +1,6 @@
 # Vimix
 
-Local AI-powered media processing toolkit. Remove video backgrounds, convert formats, compress, trim, extract audio, and more — all running on your machine. No cloud, no uploads, no API keys. Everything runs locally.
+Local AI-powered media processing toolkit. Remove video backgrounds, convert formats, compress, trim, extract audio, and more — all running on your machine. No cloud, no uploads, everything stays on your computer.
 
 <p align="center">
   <img src="screenshot_1.png" alt="Vimix - Tool selection" width="700" />
@@ -23,6 +23,8 @@ Or browse all releases on the [Releases page](https://github.com/kike1303/vimix/
 
 ## Features
 
+### Processing Tools
+
 - **Video Background Removal**: Upload an MP4/MOV/WebM, get an animated WebP with transparent background
 - **Image Background Removal**: Remove backgrounds from images (PNG, JPG, WebP)
 - **Format Conversion**: Convert between video/image formats
@@ -33,12 +35,59 @@ Or browse all releases on the [Releases page](https://github.com/kike1303/vimix/
 - **Image Compression**: Optimize image file sizes
 - **Image Watermark**: Add text watermarks to images
 - **PDF to Image**: Convert PDF pages to images
+- **PDF Merge**: Combine multiple PDFs into one
+- **PDF Split**: Extract page ranges from a PDF
 - **Video Thumbnails**: Extract thumbnail frames from videos
 - **Batch Processing**: Process multiple files at once
+
+### AI Chat
+
+Vimix includes a built-in AI chat where you can describe what you want in plain language and the AI does it for you — no need to navigate menus or configure options manually.
+
+Just type something like *"remove the background from this image"* or *"merge these PDFs"*, attach your files, and the AI picks the right processor, runs it, and gives you a download button when it's done.
+
+Supports multiple LLM providers:
+
+| Provider | Type |
+|----------|------|
+| Ollama | Local and free — auto-detected if running |
+| Google Gemini | Free API key |
+| Anthropic | API key |
+| OpenAI | API key |
+| OpenRouter | API key (access to hundreds of models) |
+
+Configure your provider in the chat settings (gear icon). Ollama is detected automatically if it's running on your machine.
+
+### MCP Server
+
+Vimix exposes its processing tools via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), so AI coding agents like Claude Code, Cursor, Windsurf, Copilot, and others can use Vimix as a tool directly from your editor.
+
+The MCP server starts automatically alongside the API and runs on **port 8788** (Streamable HTTP). On startup, Vimix auto-registers itself in all detected AI agents on your machine.
+
+Available MCP tools:
+- `list_processors` — discover all available processors and their options
+- `process_file` — process a single file with any processor
+- `batch_process` — process multiple files in one operation
+
+To use it manually, add this to your agent's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "vimix": {
+      "type": "streamable-http",
+      "url": "http://localhost:8788/mcp"
+    }
+  }
+}
+```
+
+### General
+
 - **Real-time progress**: SSE-powered live progress updates
 - **Dark/Light mode**: Automatic theme detection with manual toggle
 - **Multilanguage**: English and Spanish
-- **Desktop App**: Native macOS app via Tauri (Windows/Linux planned)
+- **Desktop App**: Native macOS/Windows app via Tauri
 
 ## Prerequisites
 
@@ -183,19 +232,23 @@ VITE_API_URL=http://localhost:9000 pnpm dev
 
 ```
 vimix/
-├── apps/web/                  # SvelteKit 5 + TailwindCSS v4 + shadcn-svelte
+├── apps/web/                  # SvelteKit 2 + Svelte 5 + TailwindCSS v4 + shadcn-svelte
 │   ├── src/
-│   │   ├── routes/            # Pages
+│   │   ├── routes/            # Pages (tools, chat, jobs)
+│   │   ├── lib/ai/            # AI chat: provider factory, tools, types
 │   │   ├── lib/components/    # App components + shadcn UI
 │   │   └── lib/i18n/          # Translations (en, es)
 │   └── src-tauri/             # Tauri desktop shell (Rust)
 │       ├── binaries/          # PyInstaller sidecar (gitignored)
 │       └── resources/         # Static ffmpeg/img2webp (gitignored)
-├── services/processor/        # Python FastAPI
+├── services/processor/        # Python FastAPI (port 8787)
 │   └── app/
 │       ├── routers/           # HTTP endpoints
-│       ├── processors/        # Processing pipelines (12 processors)
+│       ├── processors/        # Processing pipelines
 │       └── services/          # Job manager, file manager, binary paths
+├── services/mcp/              # MCP server (port 8788)
+│   ├── server.py              # Streamable HTTP MCP server
+│   └── register.py            # Auto-registration in AI agents
 ├── scripts/                   # Build scripts
 │   └── download-desktop-binaries.sh
 ├── docs/                      # Documentation
@@ -216,7 +269,9 @@ vimix/
 |-------|-----------|
 | Frontend | SvelteKit 2, Svelte 5 (runes), TailwindCSS v4, shadcn-svelte |
 | Backend | Python 3.9+, FastAPI, Uvicorn |
-| AI/Processing | rembg (U2Net/ONNX), FFmpeg, img2webp |
+| AI Chat | Vercel AI SDK, @ai-sdk/openai, @ai-sdk/anthropic, @ai-sdk/google |
+| MCP Server | Model Context Protocol (Streamable HTTP) |
+| Processing | rembg (U2Net/ONNX), FFmpeg, img2webp |
 | Desktop | Tauri 2 (Rust), PyInstaller |
 | i18n | svelte-i18n (EN, ES) |
 | Theming | mode-watcher (dark/light) |

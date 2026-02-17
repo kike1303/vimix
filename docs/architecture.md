@@ -231,3 +231,43 @@ All processing happens 100% locally. The MCP server reads files from disk, sends
 | `server.py` | MCP server with 3 tools (Streamable HTTP transport) |
 | `register.py` | Auto-registration in AI agent configs |
 | `requirements.txt` | Python dependencies (mcp, httpx) |
+
+## AI Chat – `apps/web/src/lib/ai/`
+
+The in-app AI chat lets users describe what they want in natural language, and the AI executes it using Vimix processors. LLM calls run **client-side** (browser → LLM API directly) since this is a desktop app with `adapter-static`.
+
+### Architecture
+
+```
+┌──────────────┐     LLM API      ┌──────────────┐
+│  Browser     │ ────────────────► │  LLM Provider│
+│  (AI SDK)    │ ◄──────────────── │  (streaming)  │
+│              │                    └──────────────┘
+│  streamText()│     HTTP
+│  + tools     │ ────────────────► ┌──────────────┐
+│              │ ◄──────────────── │  FastAPI      │
+│              │   POST /jobs      │  :8787        │
+└──────────────┘   GET /progress   └──────────────┘
+```
+
+### Supported providers
+
+| Provider | Type | SDK |
+|----------|------|-----|
+| Ollama | Local (free) | `@ai-sdk/openai` (compat mode) |
+| Google Gemini | Free API key | `@ai-sdk/google` |
+| Anthropic | API key | `@ai-sdk/anthropic` |
+| OpenAI | API key | `@ai-sdk/openai` |
+| OpenRouter | API key | `@ai-sdk/openai` (custom baseURL) |
+
+### Key files
+
+| File | Purpose |
+|------|---------|
+| `src/lib/ai/types.ts` | TypeScript types for chat, providers, tool calls |
+| `src/lib/ai/client.ts` | Provider factory: config → AI SDK model instance |
+| `src/lib/ai/tools.ts` | Tool definitions (list_processors, process_file, batch_process) |
+| `src/lib/stores/chat.svelte.ts` | Chat state: messages, streaming, tool execution loop |
+| `src/lib/stores/ai-providers.svelte.ts` | Provider config: API keys, models, Ollama detection |
+| `src/lib/components/chat/ChatView.svelte` | Main chat layout |
+| `src/lib/components/settings/ProviderSettings.svelte` | Provider configuration dialog |
