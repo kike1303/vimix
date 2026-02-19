@@ -29,16 +29,21 @@
     if (!provider || disabled) return;
     signingIn = true;
     error = null;
-    const result = await connectProviderOAuth(provider.id);
-    signingIn = false;
-    if (!result.success) {
-      if (result.error === "port_busy") {
-        error = $_("settings.oauth.portBusy");
-      } else if (result.error === "timeout") {
-        error = $_("settings.oauth.timeout");
-      } else {
-        error = $_("settings.oauth.failed");
+    try {
+      const result = await connectProviderOAuth(provider.id);
+      if (!result.success) {
+        if (result.error === "port_busy") {
+          error = $_("settings.oauth.portBusy");
+        } else if (result.error === "timeout") {
+          error = $_("settings.oauth.timeout");
+        } else {
+          error = $_("settings.oauth.failed");
+        }
       }
+    } catch {
+      error = $_("settings.oauth.failed");
+    } finally {
+      signingIn = false;
     }
   }
 

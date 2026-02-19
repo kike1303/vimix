@@ -33,6 +33,11 @@ function API_URL(): string {
   return _apiBaseUrl || import.meta.env.VITE_API_URL || "http://localhost:8787";
 }
 
+/** Returns the current resolved API base URL (after initApiUrl has been called). */
+export function getApiUrl(): string {
+  return API_URL();
+}
+
 /**
  * Wait until the backend API responds to /health.
  * Used by the loading screen to know when the sidecar is ready.

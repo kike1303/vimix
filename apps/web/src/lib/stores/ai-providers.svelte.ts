@@ -14,6 +14,7 @@ import {
   exchangeCodeForTokens,
   refreshAccessToken,
 } from "$lib/ai/oauth";
+import { getApiUrl } from "$lib/api";
 
 const PROVIDERS_KEY = "vimix-ai-providers";
 const MODEL_KEY = "vimix-selected-model";
@@ -315,10 +316,6 @@ export async function detectOllama(): Promise<boolean> {
 
 // ── OAuth ──────────────────────────────────────────────────────
 
-function apiUrl(): string {
-  return import.meta.env.VITE_API_URL || "http://localhost:8787";
-}
-
 /**
  * Full OAuth PKCE flow for OpenAI:
  * 1. Start callback listener on backend
@@ -334,7 +331,7 @@ export async function connectProviderOAuth(
   const state = generateState();
 
   // Tell backend to start the callback listener
-  const startRes = await fetch(`${apiUrl()}/oauth/start`, {
+  const startRes = await fetch(`${getApiUrl()}/oauth/start`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ state }),
@@ -362,7 +359,7 @@ export async function connectProviderOAuth(
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise((r) => setTimeout(r, 2000));
     try {
-      const pollRes = await fetch(`${apiUrl()}/oauth/poll/${state}`);
+      const pollRes = await fetch(`${getApiUrl()}/oauth/poll/${state}`);
       if (!pollRes.ok) break;
       const data = await pollRes.json();
       if (data.status === "received" && data.code) {
@@ -376,7 +373,7 @@ export async function connectProviderOAuth(
 
   if (!code) {
     // Clean up the listener
-    await fetch(`${apiUrl()}/oauth/stop`, { method: "POST" }).catch(() => {});
+    await fetch(`${getApiUrl()}/oauth/stop`, { method: "POST" }).catch(() => {});
     return { success: false, error: "timeout" };
   }
 

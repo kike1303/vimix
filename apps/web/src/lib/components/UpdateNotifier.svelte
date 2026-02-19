@@ -35,7 +35,8 @@
       status = "downloading";
       await updateRef.downloadAndInstall();
       status = "restarting";
-      // Tauri restarts the app automatically after install on most platforms
+      const { relaunch } = await import("@tauri-apps/plugin-process");
+      await relaunch();
     } catch {
       status = "error";
     }

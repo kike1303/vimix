@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-02-18
+
+### Fixed
+
+- OAuth sign-in (ChatGPT) button stayed in loading state indefinitely in the distributed desktop app — the OAuth API calls used a hardcoded port `:8787` instead of the dynamic port assigned to the sidecar at runtime
+- Auto-updater "Restarting..." state never actually restarted the app — `downloadAndInstall()` does not relaunch automatically; now calls `relaunch()` explicitly after install
+
 ## [0.7.0] - 2026-02-17
 
 ### Added
