@@ -209,6 +209,26 @@ jobs:
           projectPath: apps/web
           releaseId: ${{ needs.create-release.outputs.release_id }}
 
+      # Upload a fixed-name copy so releases/latest/download/Vimix_*.* always works
+      - name: Upload fixed-name artifact (macOS)
+        if: matrix.platform == 'macos'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DMG=$(find apps/web/src-tauri/target/release/bundle/dmg -name "*.dmg" | head -1)
+          cp "$DMG" Vimix_aarch64.dmg
+          gh release upload "$GITHUB_REF_NAME" Vimix_aarch64.dmg --clobber
+
+      - name: Upload fixed-name artifact (Windows)
+        if: matrix.platform == 'windows'
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXE=$(find apps/web/src-tauri/target/release/bundle/nsis -name "*-setup.exe" | head -1)
+          cp "$EXE" Vimix_x64-setup.exe
+          gh release upload "$GITHUB_REF_NAME" Vimix_x64-setup.exe --clobber
+
   publish-release:
     name: Publish release
     needs: [create-release, build-desktop]

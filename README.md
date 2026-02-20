@@ -1,6 +1,10 @@
 # Vimix
 
-Local AI-powered media processing toolkit. Remove video backgrounds, convert formats, compress, trim, extract audio, and more — all running on your machine. No cloud, no uploads, everything stays on your computer.
+**Vimix is a free desktop app that lets you process videos, images, PDFs, and audio files directly on your computer — no internet connection needed, no files uploaded anywhere.**
+
+You drop in a file, pick what you want to do (remove background, compress, convert format, trim, extract audio…), and Vimix handles everything locally using AI and open-source tools. There's also a built-in chat where you can just describe what you need in plain language and the AI figures out the rest.
+
+Think of it as having Photoshop's background removal, a video editor, a PDF tool, and an AI assistant — all in one lightweight app, running entirely offline.
 
 <p align="center">
   <img src="screenshot_1.png" alt="Vimix - Tool selection" width="700" />
@@ -10,16 +14,20 @@ Local AI-powered media processing toolkit. Remove video backgrounds, convert for
   <img src="screenshot_2.png" alt="Vimix - Processor options" width="700" />
 </p>
 
-## Download
+<p align="center">
+  <img src="screenshot_3.png" alt="Vimix - AI Chat" width="700" />
+</p>
 
-Download the latest version for your platform:
+## Download
 
 | Platform | Download |
 |----------|----------|
-| macOS (Apple Silicon) | [Vimix.dmg](https://github.com/kike1303/vimix/releases/latest/download/Vimix_aarch64.dmg) |
-| Windows (x64) | [Vimix.msi](https://github.com/kike1303/vimix/releases/latest/download/Vimix_x64-setup.msi) |
+| macOS (Apple Silicon) | [Vimix_aarch64.dmg](https://github.com/kike1303/vimix/releases/latest/download/Vimix_aarch64.dmg) |
+| Windows (x64) | [Vimix_x64-setup.exe](https://github.com/kike1303/vimix/releases/latest/download/Vimix_x64-setup.exe) |
 
 Or browse all releases on the [Releases page](https://github.com/kike1303/vimix/releases).
+
+> **macOS:** open the `.dmg`, drag Vimix to Applications, and launch it. On first open, right-click → Open if macOS warns about an unidentified developer.
 
 ## Features
 
