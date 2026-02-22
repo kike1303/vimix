@@ -126,7 +126,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Vimix – Processor API",
-    version="0.7.2",
+    version="0.7.3",
     lifespan=lifespan,
 )
 
