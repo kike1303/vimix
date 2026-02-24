@@ -95,7 +95,7 @@ def _parse_page_range(range_str: str, total_pages: int) -> list[int]:
 def _extract_text(
     src: Path, dest: Path, fmt: str, pages_mode: str, page_range: str
 ) -> None:
-    import fitz
+    import pymupdf as fitz
 
     doc = fitz.open(str(src))
     total = len(doc)

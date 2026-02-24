@@ -83,7 +83,7 @@ class PdfPageNumbersProcessor(BaseProcessor):
 def _add_page_numbers(
     src: Path, dest: Path, position: str, start_number: int, font_size: int
 ) -> None:
-    import fitz
+    import pymupdf as fitz
 
     doc = fitz.open(str(src))
     total = len(doc)

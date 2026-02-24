@@ -96,7 +96,7 @@ def _images_to_pdf(
     orientation: str,
     margin_mm: int,
 ) -> None:
-    import fitz
+    import pymupdf as fitz
     from PIL import Image
 
     margin_pt = margin_mm * 72 / 25.4  # mm to points

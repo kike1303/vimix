@@ -56,7 +56,7 @@ class PdfCompressProcessor(BaseProcessor):
 
 
 def _compress_pdf(src: Path, dest: Path, quality: str) -> None:
-    import fitz
+    import pymupdf as fitz
 
     image_quality = {"low": 30, "medium": 60, "high": 85}[quality]
 

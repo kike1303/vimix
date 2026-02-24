@@ -113,7 +113,7 @@ def _add_watermark(
     font_size: int,
     color: str,
 ) -> None:
-    import fitz
+    import pymupdf as fitz
 
     doc = fitz.open(str(src))
     rgb = _COLORS.get(color, _COLORS["gray"])

@@ -89,7 +89,7 @@ def _parse_page_range(range_str: str, total_pages: int) -> list[int]:
 
 
 def _split_pdf(src: Path, output_dir: Path, mode: str, page_range: str) -> Path:
-    import fitz
+    import pymupdf as fitz
 
     doc = fitz.open(str(src))
     total = len(doc)

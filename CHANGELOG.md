@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.4] - 2026-02-24
+
+### Fixed
+
+- PDF processors failed with "cannot import name '_extra' from partially
+  initialized module 'pymupdf'" — replaced `import fitz` with
+  `import pymupdf as fitz` in all 11 PDF processors to avoid the circular
+  import introduced in PyMuPDF 1.24+
+
 ## [0.7.3] - 2026-02-22
 
 ### Added

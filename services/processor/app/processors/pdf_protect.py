@@ -69,7 +69,7 @@ class PdfProtectProcessor(BaseProcessor):
 
 
 def _protect_pdf(src: Path, dest: Path, password: str, permissions: str) -> None:
-    import fitz
+    import pymupdf as fitz
 
     perm_map = {
         "all": int(

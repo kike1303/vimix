@@ -106,7 +106,7 @@ def _convert_pdf(
     pages_mode: str,
     quality: int,
 ) -> Path:
-    import fitz  # PyMuPDF
+    import pymupdf as fitz
 
     doc = fitz.open(str(src))
     total_pages = len(doc)

@@ -47,7 +47,7 @@ class PdfMergeProcessor(BaseProcessor):
 
 
 def _merge_pdfs(paths: list[Path], output: Path) -> None:
-    import fitz
+    import pymupdf as fitz
 
     result = fitz.open()
     for p in paths:

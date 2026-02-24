@@ -56,7 +56,7 @@ class PdfUnlockProcessor(BaseProcessor):
 
 
 def _unlock_pdf(src: Path, dest: Path, password: str) -> None:
-    import fitz
+    import pymupdf as fitz
 
     doc = fitz.open(str(src))
     if doc.is_encrypted:
