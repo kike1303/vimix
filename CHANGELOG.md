@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.5] - 2026-03-05
+
+### Fixed
+
+- PDF Compress generated corrupted output files — replaced images correctly by
+  using `fitz.Pixmap` to decode images, storing raw JPEG with `compress=False`
+  to avoid wrapping JPEG streams in a second FlateDecode layer, and updating
+  all image XObject dictionary keys (`Filter`, `ColorSpace`,
+  `BitsPerComponent`, `Width`, `Height`) to match the new JPEG content.
+  Images with an alpha channel also had their `SMask` reference removed after
+  conversion to RGB.
+
 ## [0.7.4] - 2026-02-24
 
 ### Fixed

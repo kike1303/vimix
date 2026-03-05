@@ -62,28 +62,40 @@ def _compress_pdf(src: Path, dest: Path, quality: str) -> None:
 
     doc = fitz.open(str(src))
 
+    seen_xrefs: set[int] = set()
     for page in doc:
-        images = page.get_images(full=True)
-        for img_info in images:
+        for img_info in page.get_images(full=True):
             xref = img_info[0]
+            if xref in seen_xrefs:
+                continue
+            seen_xrefs.add(xref)
             try:
-                base_image = doc.extract_image(xref)
-                if base_image is None:
+                pix = fitz.Pixmap(doc, xref)
+                has_alpha = pix.n > 3
+                if has_alpha:
+                    pix = fitz.Pixmap(fitz.csRGB, pix)
+
+                jpeg_bytes = pix.tobytes("jpeg", jpg_quality=image_quality)
+                current_stream = doc.xref_stream(xref)
+
+                if current_stream is None or len(jpeg_bytes) >= len(current_stream):
                     continue
-                image_bytes = base_image["image"]
 
-                from PIL import Image
-                import io
+                # Store raw JPEG — do NOT let update_stream apply FlateDecode on top
+                doc.update_stream(xref, jpeg_bytes, compress=False)
 
-                with Image.open(io.BytesIO(image_bytes)) as im:
-                    if im.mode in ("RGBA", "P"):
-                        im = im.convert("RGB")
-                    buf = io.BytesIO()
-                    im.save(buf, format="JPEG", quality=image_quality, optimize=True)
-                    compressed = buf.getvalue()
-
-                if len(compressed) < len(image_bytes):
-                    doc.update_stream(xref, compressed)
+                # Update the image XObject dictionary to match the new JPEG stream
+                colorspace = "/DeviceGray" if pix.n == 1 else "/DeviceRGB"
+                doc.xref_set_key(xref, "Filter", "/DCTDecode")
+                doc.xref_set_key(xref, "ColorSpace", colorspace)
+                doc.xref_set_key(xref, "BitsPerComponent", "8")
+                doc.xref_set_key(xref, "Width", str(pix.width))
+                doc.xref_set_key(xref, "Height", str(pix.height))
+                if has_alpha:
+                    # SMask referenced an alpha channel we've dropped; remove it
+                    doc.xref_set_key(xref, "SMask", "")
+                # Remove any decode array that applied to the old format
+                doc.xref_set_key(xref, "Decode", "")
             except Exception:
                 continue
 
